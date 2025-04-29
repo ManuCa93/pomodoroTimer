@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pomodoro Timer</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+
     <style>
         :root {
             --primary-color: blueviolet;
@@ -1578,9 +1580,9 @@
                 let formattedTime = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
                 
                 if (onBreak) {
-                    document.title = `Break - ${formattedTime} - Pomo n.${currentPomodoro}`;
+                    document.title = `Break - ${formattedTime} - Pomo n.${currentPomodoro+1}`;
                 } else {
-                    document.title = `Work - ${formattedTime} - Pomo n.${currentPomodoro}`;
+                    document.title = `Work - ${formattedTime} - Pomo n.${currentPomodoro+1}`;
                 }
             } else {
                 document.title = "Pomodoro Timer"; // Titolo statico quando il timer è in pausa
