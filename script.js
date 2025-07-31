@@ -677,7 +677,7 @@ function updateBubbleColors() {
     const bubbles = document.querySelectorAll('.bubble');
     const buttons = document.querySelectorAll('.modern-button'); // Seleziona i bottoni moderni
     const newColor = !onBreak ? getComputedStyle(document.documentElement).getPropertyValue('--break-color').trim() 
-                        : getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
+                                : getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
 
     // Cambia il colore delle bolle
     bubbles.forEach((bubble) => {
@@ -695,9 +695,15 @@ function updateBubbleColors() {
 
     if (playIcon) playIcon.style.color = newColor; // Cambia colore del play
     if (pauseIcon) pauseIcon.style.color = newColor;
+    
+    // Aggiunto: il sottotitolo ha lo stesso colore delle bolle
+    const subtitleElement = document.getElementById('subtitle');
+    if (subtitleElement) {
+        subtitleElement.style.color = newColor;
+    }
+
     toggleTitleVisibility();
 }
-
 function openInfoPopup() {
     document.getElementById("info-popup").style.display = "flex";
 }

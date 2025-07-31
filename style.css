@@ -12,10 +12,19 @@
             align-items: center;
             height: 100vh;
             background: var(--background-color);
-            font-family: Arial, sans-serif;
+            font-family: 'Libre Franklin', sans-serif;
             color: var(--primary-color);
             text-align: center;
         }
+
+        h1, h2, h3 {
+            font-family: 'Mozilla Headline', sans-serif;
+        }
+
+        .logo, .title-special {
+            font-family: 'Modak', cursive;
+        }
+
         /* Stile del Titolo */
         #main-title {
             position: absolute;
@@ -33,6 +42,7 @@
             transform: translateY(-5vh);
             pointer-events: none;
         }
+
 
         /* Animazione per mostrare il titolo */
         .visible-title {
@@ -161,7 +171,7 @@
         }
         /* Dimensione testo timer */
         .time {
-            font-size: clamp(10rem, 17vh, 5rem);
+            font-size: clamp(9rem, 17vh, 5rem);
             font-weight: bold;
             position: relative;
             display: flex;
@@ -785,7 +795,7 @@
             color: var(--primary-color); /* Colore coerente con la pagina */
             opacity: 1; /* Il sottotitolo è sempre visibile */
             transform: translateY(0);
-            transition: opacity 0.5s ease, transform 0.5s ease;
+            transition: opacity 2.5s ease, transform 2.5s ease, color 2.5s ease; /* Aggiunto 'color 0.5s ease' */
         }
 
         #subtitle.hidden-title {
