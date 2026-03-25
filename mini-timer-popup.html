@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary-color: #8A2BE2;
+            --background-color: #000000;
+            --break-color: #FF8C00;
+        }
+
+        body {
+            background: var(--background-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            cursor: pointer;
+            user-select: none;
+            -webkit-app-region: drag;  /* ← rende tutta la finestra trascinabile */
+        }
+
+        #timer-display {
+            font-family: Monaco, 'Courier New', monospace;
+            font-size: 22vw;
+            font-weight: bold;
+            letter-spacing: 0.06em;
+            color: var(--primary-color);
+            transition: color 0.5s ease, opacity 0.4s ease;
+            -webkit-app-region: no-drag;
+        }
+
+        #timer-display.break {
+            color: var(--break-color);
+        }
+
+        #timer-display.paused {
+            opacity: 0.8;
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% { text-shadow: 0 0 12px currentColor; }
+            50%       { text-shadow: 0 0 40px currentColor, 0 0 70px currentColor; }
+        }
+
+        #timer-display.running {
+            animation: glow-pulse 2.5s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <div id="timer-display">25:00</div>
+
+    <script>
+        let timerData = {
+            remainingTime: 25 * 60,
+            onBreak: false,
+            isRunning: false,
+            currentPomodoro: 0,
+            totalPomodoros: 4
+        };
+
+        const displayEl = document.getElementById('timer-display');
+
+        function updateDisplay() {
+            const m = Math.floor(timerData.remainingTime / 60);
+            const s = timerData.remainingTime % 60;
+            displayEl.textContent = `${m}:${s.toString().padStart(2, '0')}`;
+            displayEl.classList.toggle('break',   timerData.onBreak);
+            displayEl.classList.toggle('paused',  !timerData.isRunning);
+            displayEl.classList.toggle('running',  timerData.isRunning);
+            document.title = displayEl.textContent;
+        }
+
+        function syncColors() {
+            try {
+                const r = document.documentElement;
+                r.style.setProperty('--primary-color',    localStorage.getItem('primary-color')    || '#8A2BE2');
+                r.style.setProperty('--background-color', localStorage.getItem('background-color') || '#000000');
+                r.style.setProperty('--break-color',      localStorage.getItem('break-color')      || '#FF8C00');
+            } catch(e) {}
+        }
+
+        function readFromStorage() {
+            try {
+                const raw = localStorage.getItem('timerData');
+                if (!raw) return;
+                const data = JSON.parse(raw);
+                timerData.remainingTime    = data.remainingTime;
+                timerData.onBreak          = data.onBreak;
+                timerData.isRunning        = data.isRunning;
+                timerData.currentPomodoro  = data.currentPomodoro;
+                timerData.totalPomodoros   = data.totalPomodoros;
+                updateDisplay();
+            } catch(e) {}
+        }
+
+        // Sync ISTANTANEA: storage event si triggera non appena la main window scrive
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'timerData') readFromStorage();
+            if (['primary-color', 'background-color', 'break-color'].includes(e.key)) syncColors();
+        });
+
+        // Fallback polling ogni 300ms (es. caricamento iniziale)
+        // setInterval(readFromStorage, 300);
+        setInterval(() => {
+            const raw = localStorage.getItem('timerData');
+            if (!raw) return;
+            const data = JSON.parse(raw);
+
+            let remaining;
+            if (data.isRunning && data.startTimestamp && data.startRemaining != null) {
+                // Calcola il tempo reale trascorso, indipendente dai tick
+                const elapsed = Math.floor((Date.now() - data.startTimestamp) / 1000);
+                remaining = Math.max(0, data.startRemaining - elapsed);
+            } else {
+                // Timer in pausa: usa il valore statico
+                remaining = data.remainingTime;
+            }
+
+            const minutes = Math.floor(remaining / 60);
+            const seconds = remaining % 60;
+            // aggiorna il display del mini timer con minutes e seconds...
+        }, 1000);
+
+
+        // Click su qualsiasi punto = toggle play/pause
+        document.body.addEventListener('click', () => {
+            // Flash visivo immediato
+            displayEl.style.opacity = '0.1';
+            setTimeout(() => { displayEl.style.opacity = ''; updateDisplay(); }, 180);
+            // Invia comando alla main window
+            localStorage.setItem('timerCommand', JSON.stringify({
+                action: 'toggle',
+                timestamp: Date.now()
+            }));
+        });
+
+        syncColors();
+        readFromStorage();
+    </script>
+</body>
+</html>
