@@ -160,8 +160,8 @@
         }
         svg {
             position: absolute;
-            width: min(130%, 450px);
-            height: min(130%, 450px);
+            width: min(195%, 675px);
+            height: min(195%, 675px);
         }
         circle {
             fill: none;
@@ -174,7 +174,7 @@
         }
         /* Dimensione testo timer */
         .time {
-            font-size: clamp(2.5rem, 12vw, 5rem);
+            font-size: clamp(5.625rem, 27vw, 11.25rem);
             font-weight: bold;
             position: relative;
             display: flex;
@@ -248,27 +248,27 @@
         .timer-small {
             left: 15% !important; /* Ancora più a sinistra */
             top: 70% !important; /* Più in basso */
-            width: min(42vw, 150px) !important;
-            height: min(42vw, 150px) !important;
+            width: min(63vw, 225px) !important;
+            height: min(63vw, 225px) !important;
         }
         .timer-small .time {
-            font-size: clamp(1.5rem, 6vw, 4rem);
+            font-size: clamp(2.25rem, 9vw, 6rem);
         }
         /* Timer della pausa - testo */
         .break-timer-container .time {
-            font-size: clamp(1.5rem, 6vw, 4rem);
+            font-size: clamp(2.25rem, 9vw, 6rem);
             color: var(--break-color) !important;
         }
         /* Timer della pausa - diventa grande al centro */
         .break-timer-large {
             left: 50% !important;
             top: 50% !important;
-            width: min(100vw, 600px);
-            height: min(100vw, 600px);
+            width: min(150vw, 900px);
+            height: min(150vw, 900px);
             transform: translate(-50%, -50%);
         }
         .break-timer-large .time {
-            font-size: clamp(2.5rem, 12vw, 5rem);
+            font-size: clamp(5.625rem, 27vw, 11.25rem);
             color: var(--break-color) !important;
         }
         /* Nasconde il cerchio del timer piccolo inizialmente */
