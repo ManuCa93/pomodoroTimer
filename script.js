@@ -350,7 +350,6 @@ function updatePageTitle() {
 
 function toggleTimer() {
     const title = document.getElementById("main-title");
-    const settingsBtn = document.getElementById("settings-button");
     const settingsMenuBtn = document.getElementById("settings-button-menu");
 
     if (isRunning) {
@@ -360,19 +359,25 @@ function toggleTimer() {
             remainingTime, onBreak, isRunning: false, currentPomodoro, totalPomodoros
         }));
         toggleBubbleAnimation(false);
-        title.classList.add("visible-title");  // Mostra il titolo
-        title.classList.remove("hidden-title");
-        settingsBtn.classList.remove("hidden-title");  // Mostra i bottoni settings
-        settingsMenuBtn.classList.remove("hidden-title");
-        document.title = "Pomodoro Timer"; // Ripristina il titolo normale
+        if(title) {
+            title.classList.add("visible-title");
+            title.classList.remove("hidden-title");
+        }
+        if(settingsMenuBtn) {
+            settingsMenuBtn.classList.remove("hidden-title");
+        }
+        document.title = "Pomodoro Timer"; 
     } else {
         startTimer();
         isRunning = true;
         toggleBubbleAnimation(true);
-        title.classList.add("hidden-title");  // Nasconde il titolo
-        title.classList.remove("visible-title");
-        settingsBtn.classList.add("hidden-title");  // Nasconde i bottoni settings
-        settingsMenuBtn.classList.add("hidden-title");
+        if(title) {
+            title.classList.add("hidden-title");
+            title.classList.remove("visible-title");
+        }
+        if(settingsMenuBtn) {
+            settingsMenuBtn.classList.add("hidden-title");
+        }
         updatePageTitle();
     }
     toggleTitleVisibility();
@@ -687,31 +692,17 @@ function updateSubtitle() {
 }
 
 function toggleTitleVisibility() {
-    
     const title = document.getElementById("main-title");
     const subtitle = document.getElementById("subtitle");
-    const subjectContainer = document.getElementById("subject-container");
-
-    console.log("🎭 Controllo visibilità titolo. isRunning:", isRunning, "onBreak:", onBreak);
 
     if ((isRunning || onBreak)) {
-        console.log("👻 Nascondo il titolo!");
         title.classList.add("hidden-title");
         title.classList.remove("visible-title");
-        if(subjectContainer) {
-            subjectContainer.classList.add("hidden-title");
-            subjectContainer.classList.remove("fade-in");
-        }
-        subtitle.classList.add("move-up"); // Sposta il sottotitolo più in alto
+        subtitle.classList.add("move-up");
     } else {
-        console.log("📢 Mostro il titolo!");
         title.classList.add("visible-title");
         title.classList.remove("hidden-title");
-        if(subjectContainer) {
-            subjectContainer.classList.remove("hidden-title");
-            subjectContainer.classList.add("fade-in");
-        }
-        subtitle.classList.remove("move-up"); // Riporta il sottotitolo alla posizione originale
+        subtitle.classList.remove("move-up");
     }
 }
 
@@ -1139,7 +1130,6 @@ function filterSubjectDropdown() {
             let selected = match.replace('Create new: "', '').replace('"', '');
             document.getElementById("subject-input").value = selected;
             dropdown.style.display = "none";
-            document.getElementById("subtopic-container").style.display = "flex"; // Show subtopic
             if (!savedSubjects.includes(selected)) {
                 savedSubjects.push(selected);
             }
