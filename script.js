@@ -1130,6 +1130,8 @@ function filterSubjectDropdown() {
             let selected = match.replace('Create new: "', '').replace('"', '');
             document.getElementById("subject-input").value = selected;
             dropdown.style.display = "none";
+            document.getElementById("subtopic-container").style.display = "flex";
+            document.getElementById("todo-list-container").style.display = "block";
             if (!savedSubjects.includes(selected)) {
                 savedSubjects.push(selected);
             }
@@ -1171,4 +1173,23 @@ function addTodo(event) {
         }
     }
 }
+
+
+
+// Hide/Show subtopic and todo list based on subject input
+document.addEventListener("DOMContentLoaded", () => {
+    const subjectInput = document.getElementById("subject-input");
+    if(subjectInput) {
+        subjectInput.addEventListener("input", function() {
+            const val = this.value.trim();
+            if (val.length > 0) {
+                document.getElementById("subtopic-container").style.display = "flex";
+                document.getElementById("todo-list-container").style.display = "block";
+            } else {
+                document.getElementById("subtopic-container").style.display = "none";
+                document.getElementById("todo-list-container").style.display = "none";
+            }
+        });
+    }
+});
 

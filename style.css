@@ -1978,3 +1978,30 @@
             display: block;
         }
 
+
+        /* Panel Restore Button */
+        .restore-panel-btn {
+            position: absolute;
+            left: -10vw;
+            top: 4vh;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-left: none;
+            color: white;
+            border-radius: 0 10px 10px 0;
+            padding: 1.5vh 0.5vw;
+            cursor: pointer;
+            z-index: 100;
+            transition: left 0.5s ease;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .restore-panel-btn .material-icons {
+            font-size: 3vh;
+        }
+        body.panel-collapsed .restore-panel-btn {
+            left: 0;
+        }
+
