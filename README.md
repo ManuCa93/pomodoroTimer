@@ -53,3 +53,27 @@ Il modello a documenti (NoSQL) salva i dati in file simili a JSON.
 ### 🏆 Raccomandazione per questo progetto
 Se la tua priorità è avere **Statistiche e Analytics molto complesse e precise** incrociando date, materie e tempo effettivo, un database **SQL (PostgreSQL)** è la scelta migliore.
 Tuttavia, se preferisci uno sviluppo molto rapido, vuoi l'**autenticazione Google immediata** e la sincronizzazione live tra smartphone e PC con poco sforzo, **Firebase (NoSQL)** è un'ottima alternativa, a patto di strutturare bene i dati fin dall'inizio per facilitare i calcoli statistici.
+
+---
+
+## ☁️ Come Implementare il Database (Senza avere un Server)
+
+Dato che non hai una macchina/server dedicato e vuoi mantenere i costi a zero, la soluzione ideale è affidarsi a piattaforme **BaaS (Backend as a Service)**. Queste piattaforme offrono database, autenticazione e hosting pronti all'uso, con **piani gratuiti molto generosi** perfetti per progetti personali:
+
+### 1. Supabase (Alternativa SQL) - *Consigliata per Analytics*
+Supabase è considerato l'alternativa open-source a Firebase, ma è basato su **PostgreSQL (SQL)**.
+* **Come funziona:** Ti fornisce un database online a cui ti colleghi direttamente dal tuo file `script.js` tramite la loro libreria JavaScript.
+* **Costi:** Ha un piano gratuito ("Free Tier") molto abbondante (fino a 500MB di DB e 50,000 utenti mensili attivi).
+* **Vantaggi:** Include **Login con Google** e tutto il potere di SQL per calcolare facilmente le tue statistiche (es. ore mensili per materia).
+
+### 2. Firebase (NoSQL di Google) - *Consigliata per velocità di sviluppo*
+La piattaforma serverless per eccellenza sviluppata da Google.
+* **Come funziona:** Usa **Firestore** (il loro database NoSQL). Ti colleghi aggiungendo lo script di Firebase nel tuo HTML. 
+* **Costi:** Piano "Spark" completamente gratuito (1GB di spazio e limiti di lettura/scrittura altissimi per un utente singolo).
+* **Vantaggi:** L'integrazione con il Login di Google è nativa e si fa in 2 righe di codice. Anche il deploy del sito è gratis tramite *Firebase Hosting*.
+
+### 3. Vercel + Neon (SQL)
+Se in futuro vorrai trasformare il sito usando framework come React o Next.js, potresti usare **Vercel** per ospitare il sito (gratis) e affiancarci **Neon** o **Vercel Postgres** per il database SQL (entrambi gratuiti per piccoli progetti).
+
+**💡 Da dove iniziare?**
+Se vuoi tenere tutto semplice, crea un account gratuito su **Supabase**. Ti daranno delle credenziali API e una documentazione semplicissima da seguire per implementare il login con Google e iniziare a salvare le tue sessioni di studio nel cloud, tutto direttamente dal tuo file JavaScript frontend, senza bisogno di configurare alcun server!
