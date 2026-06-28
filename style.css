@@ -500,8 +500,8 @@
         }
 
         /* BUTTON GROUP */
-        /* Pulsante Close in alto a destra */
-        .close-btn-top {
+        /* Pulsanti Close in alto a destra */
+        .close-btn-top, .close-btn-top2 {
             position: absolute;
             top: 2vh; 
             right: 2vw; 
@@ -510,16 +510,18 @@
             color: rgba(255, 255, 255, 0.6); 
             cursor: pointer;
             z-index: 1000;
-            transition: transform 0.2s ease, color 0.2s ease;
+            transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;
+            outline: none;
         }
         
-        .close-btn-top .material-icons {
+        .close-btn-top .material-icons, .close-btn-top2 .material-icons {
             font-size: 4vh;
+            transition: transform 0.3s ease-in-out;
         }
 
-        .close-btn-top:hover {
-            transform: scale(1.1); 
-            color: rgb(255, 0, 0); 
+        .close-btn-top:hover, .close-btn-top2:hover {
+            transform: scale(1.2) rotate(90deg); 
+            color: rgb(255, 50, 50); 
         }
 
         /* Messaggio Save centrato */
@@ -705,26 +707,7 @@
             transition: all 0.3s ease-in-out;
         }
 
-        .close-btn-top2 {
-            position: absolute;
-            top: 2vh; 
-            right: 2vw; 
-            background: transparent; 
-            border: none;
-            color: rgba(255, 255, 255, 0.6); 
-            cursor: pointer;
-            z-index: 1000;
-            transition: transform 0.2s ease, color 0.2s ease;
-        }
-        
-        .close-btn-top2 .material-icons {
-            font-size: 4vh;
-        }
-
-        .close-btn-top2:hover {
-            transform: scale(1.1); 
-            color: rgba(255, 0, 0, 0.8); 
-        }
+        /* .close-btn-top2 unified with .close-btn-top above */
         /* Animazione di apertura */
         @keyframes fadeInScale {
             from {

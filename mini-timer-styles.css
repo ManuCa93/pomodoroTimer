@@ -56,11 +56,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.2s ease;
+    transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;
+    outline: none;
 }
 
 .mini-timer-close:hover {
-    transform: scale(1.2);
+    transform: scale(1.2) rotate(90deg);
+    color: rgb(255, 50, 50);
 }
 
 .mini-timer-display {
