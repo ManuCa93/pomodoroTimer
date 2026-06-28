@@ -1175,37 +1175,62 @@ function loadTasks() {
     ul.innerHTML = "";
     if (!proj) return;
     initTopic(proj, topic);
-    const tasks = appData.projects[proj].tasks[topic] || [];
     
-    let sortedTasks = tasks.map((t, i) => ({...t, originalIndex: i}))
-                           .sort((a, b) => (a.done === b.done) ? 0 : a.done ? 1 : -1);
-                           
-    sortedTasks.forEach((t) => {
-        const i = t.originalIndex;
-        const li = document.createElement("li");
-        li.style.display = "flex"; li.style.alignItems = "center"; li.style.gap = "10px"; li.style.marginBottom = "8px";
-        li.innerHTML = `
-            <label class="custom-checkbox">
-                <input type="checkbox" onchange="toggleTask(${i}, this.checked)" ${t.done ? "checked" : ""}>
-                <span class="checkmark"></span>
-            </label>
-            <span style="text-decoration: ${t.done ? "line-through" : "none"}; opacity: ${t.done ? "0.5" : "1"}; flex-grow: 1; transition: opacity 0.3s ease;">${t.text}</span>
-            
-            <div style="display:flex; flex-direction:column; margin-right: 5px;">
-                <span class="material-icons" style="font-size:1.5vh; cursor:pointer; color:rgba(255,255,255,0.4); margin-bottom: -5px;" onclick="moveTask(${i}, -1)">expand_less</span>
-                <span class="material-icons" style="font-size:1.5vh; cursor:pointer; color:rgba(255,255,255,0.4);" onclick="moveTask(${i}, 1)">expand_more</span>
-            </div>
-            <span class="material-icons" style="font-size:2vh; cursor:pointer; color:rgba(255,255,255,0.3)" onclick="deleteTask(${i})">close</span>
-        `;
-        ul.appendChild(li);
-    });
+    const renderGroup = (tasksArray, groupName, isGeneral) => {
+        if (!tasksArray || tasksArray.length === 0) return;
+        
+        let sortedTasks = tasksArray.map((t, i) => ({...t, originalIndex: i}))
+                               .sort((a, b) => (a.done === b.done) ? 0 : a.done ? 1 : -1);
+                               
+        if (groupName) {
+            const headerLi = document.createElement("li");
+            headerLi.style.cssText = "font-size: 1.4vh; color: rgba(255,255,255,0.6); text-transform: uppercase; margin-top: 1.5vh; margin-bottom: 0.5vh; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 2px;";
+            headerLi.innerText = groupName;
+            ul.appendChild(headerLi);
+        }
+        
+        sortedTasks.forEach((t) => {
+            const i = t.originalIndex;
+            const li = document.createElement("li");
+            li.style.display = "flex"; li.style.alignItems = "center"; li.style.gap = "10px"; li.style.marginBottom = "8px";
+            li.innerHTML = `
+                <label class="custom-checkbox">
+                    <input type="checkbox" onchange="toggleTask(${i}, this.checked, ${isGeneral})" ${t.done ? "checked" : ""}>
+                    <span class="checkmark"></span>
+                </label>
+                <span contenteditable="true" onblur="editTask(${i}, this.innerText, ${isGeneral})" onkeypress="if(event.key==='Enter'){this.blur(); return false;}" style="text-decoration: ${t.done ? 'line-through' : 'none'}; opacity: ${t.done ? '0.5' : '1'}; flex-grow: 1; transition: opacity 0.3s ease; outline: none; cursor: text;">${t.text}</span>
+                
+                <div style="display:flex; flex-direction:column; margin-right: 5px;">
+                    <span class="material-icons" style="font-size:1.5vh; cursor:pointer; color:rgba(255,255,255,0.4); margin-bottom: -5px;" onclick="moveTask(${i}, -1, ${isGeneral})">expand_less</span>
+                    <span class="material-icons" style="font-size:1.5vh; cursor:pointer; color:rgba(255,255,255,0.4);" onclick="moveTask(${i}, 1, ${isGeneral})">expand_more</span>
+                </div>
+                <span class="material-icons" style="font-size:2vh; cursor:pointer; color:rgba(255,255,255,0.3)" onclick="deleteTask(${i}, ${isGeneral})">close</span>
+            `;
+            ul.appendChild(li);
+        });
+    };
+
+    if (topic) {
+        renderGroup(appData.projects[proj].tasks[topic], "Tasks: " + topic, false);
+        renderGroup(appData.projects[proj].tasks[""], "General Tasks: " + proj, true);
+    } else {
+        renderGroup(appData.projects[proj].tasks[""], "", true);
+    }
 }
 
-window.moveTask = function(index, direction) {
-    const proj = getCurrentProject(); const topic = getCurrentTopic();
-    const tasks = appData.projects[proj].tasks[topic];
+window.editTask = function(index, newText, isGeneral) {
+    const proj = getCurrentProject(); 
+    const t = isGeneral ? "" : getCurrentTopic();
+    if(appData.projects[proj].tasks[t][index].text !== newText) {
+        appData.projects[proj].tasks[t][index].text = newText;
+        saveAppData(); 
+    }
+};
+
+window.moveTask = function(index, direction, isGeneral) {
+    const proj = getCurrentProject(); const t = isGeneral ? "" : getCurrentTopic();
+    const tasks = appData.projects[proj].tasks[t];
     if (index + direction >= 0 && index + direction < tasks.length) {
-        // Swap
         const temp = tasks[index];
         tasks[index] = tasks[index + direction];
         tasks[index + direction] = temp;
@@ -1213,15 +1238,15 @@ window.moveTask = function(index, direction) {
     }
 };
 
-window.toggleTask = function(index, isDone) {
-    const proj = getCurrentProject(); const topic = getCurrentTopic();
-    appData.projects[proj].tasks[topic][index].done = isDone;
+window.toggleTask = function(index, isDone, isGeneral) {
+    const proj = getCurrentProject(); const t = isGeneral ? "" : getCurrentTopic();
+    appData.projects[proj].tasks[t][index].done = isDone;
     saveAppData(); loadTasks();
 };
 
-window.deleteTask = function(index) {
-    const proj = getCurrentProject(); const topic = getCurrentTopic();
-    appData.projects[proj].tasks[topic].splice(index, 1);
+window.deleteTask = function(index, isGeneral) {
+    const proj = getCurrentProject(); const t = isGeneral ? "" : getCurrentTopic();
+    appData.projects[proj].tasks[t].splice(index, 1);
     saveAppData(); loadTasks();
 };
 
