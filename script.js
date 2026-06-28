@@ -1133,6 +1133,7 @@ function filterSubjectDropdown() {
             document.getElementById("subject-input").value = selected;
             dropdown.style.display = "none";
             document.getElementById("subtopic-container").style.display = "flex";
+            document.querySelector('.left-section').classList.remove('focus-empty');
             document.getElementById("todo-list-container").style.display = "block";
             if (!savedSubjects.includes(selected)) {
                 savedSubjects.push(selected);
@@ -1273,10 +1274,13 @@ document.addEventListener("DOMContentLoaded", () => {
         subjectInput.addEventListener("input", function() {
             const val = this.value.trim();
             if (val.length > 0) {
+                document.querySelector('.left-section').classList.remove('focus-empty');
                 document.getElementById("subtopic-container").style.display = "flex";
+            document.querySelector('.left-section').classList.remove('focus-empty');
                 document.getElementById("todo-list-container").style.display = "block";
                 loadTasks();
             } else {
+                document.querySelector('.left-section').classList.add('focus-empty');
                 document.getElementById("subtopic-container").style.display = "none";
                 document.getElementById("todo-list-container").style.display = "none";
             }
@@ -1288,6 +1292,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initial load
     if (subjectInput && subjectInput.value.trim().length > 0) {
         document.getElementById("subtopic-container").style.display = "flex";
+            document.querySelector('.left-section').classList.remove('focus-empty');
         document.getElementById("todo-list-container").style.display = "block";
         loadTasks();
     }
@@ -1375,4 +1380,5 @@ function updateStatsUI() {
 document.addEventListener("DOMContentLoaded", () => {
     updateStatsUI();
 });
+
 
