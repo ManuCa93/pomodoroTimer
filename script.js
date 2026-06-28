@@ -110,13 +110,11 @@ function switchTimers() {
             setTimeout(() => {
             breakTimerDisplay.textContent = `${Math.floor(longBreakTime / 60)}:00`; 
             }, 600);
-            console.log("aaaaaaaaaaaaaaa")
         }
         else {
             setTimeout(() => {
             breakTimerDisplay.textContent = `${Math.floor(breakTime / 60)}:00`; 
             }, 600);
-            console.log("b")
         }
         
         // 2️⃣ Subito dopo (dopo 200ms) imposta il valore iniziale del lavoro
@@ -430,7 +428,6 @@ function skipTimer() {
     
     switchTimers();
     togglePlayPause();
-    console.log("AAAAAAAAAAAAARRIVA")
     toggleTitleVisibility();
 }
 
