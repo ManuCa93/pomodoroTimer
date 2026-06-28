@@ -764,7 +764,21 @@
             position: absolute;
             top: 13vh;
             z-index: 10;
-            transition: opacity 0.5s ease, transform 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 50px;
+            padding: 0.5vh 1.5vw;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        .subject-container:focus-within {
+            border-color: var(--primary-color);
+            background: rgba(0, 0, 0, 0.6);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.4);
         }
         .subject-container.hidden-title {
             opacity: 0;
@@ -774,22 +788,22 @@
         #subject-input {
             background: transparent;
             border: none;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
-            color: var(--primary-color);
-            font-size: 3vh;
+            color: white;
+            font-size: 2.2vh;
             font-family: 'Libre Franklin', sans-serif;
             text-align: center;
             padding: 5px;
-            width: 30vw;
+            width: 22vw;
+            min-width: 200px;
             outline: none;
-            transition: border-color 0.3s, width 0.3s;
+            transition: width 0.3s ease;
         }
         #subject-input::placeholder {
-            color: rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 300;
         }
         #subject-input:focus {
-            border-bottom: 2px solid var(--primary-color);
-            width: 35vw;
+            width: 28vw;
         }
         
         #subtitle {
@@ -1642,10 +1656,10 @@
            ======================================================= */
         @media screen and (max-width: 1024px) { /* iPad e Tablet */
             #subject-input {
-                width: 50vw;
+                width: 40vw;
             }
             #subject-input:focus {
-                width: 60vw;
+                width: 50vw;
             }
             .settings-group {
                 width: 20vw;
@@ -1671,11 +1685,11 @@
                 top: 10vh;
             }
             #subject-input {
-                width: 70vw;
-                font-size: 2.5vh;
+                width: 55vw;
+                font-size: 2vh;
             }
             #subject-input:focus {
-                width: 80vw;
+                width: 65vw;
             }
             #subtitle {
                 top: 16vh;
