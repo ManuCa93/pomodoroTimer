@@ -76,24 +76,24 @@
     <div class="left-panel fade-in">
         <!-- Quick Stats -->
         <div class="left-section">
-            <h3 class="panel-title">Recent Stats</h3>
-            <div class="stats-content">
-                <p>Today: <span class="stat-value">4h 30m</span></p>
-                <p>Pomodoros: <span class="stat-value">6</span></p>
-                <button id="analytics-button" class="analytics-btn-inline" onclick="alert('Analytics Dashboard coming soon!')">
-                    <span class="material-icons">fullscreen</span> Fullscreen Analytics
-                </button>
+            <h3 class="panel-title" style="display: flex; justify-content: space-between; align-items: center;">
+                Recent Stats
+                <span class="material-icons" style="font-size: 2vh; cursor: pointer; color: rgba(255,255,255,0.5);" onclick="document.getElementById('stats-content').style.display = document.getElementById('stats-content').style.display === 'none' ? 'block' : 'none'">expand_more</span>
+            </h3>
+            <div id="stats-content" class="stats-content">
+                <p>Today: <span class="stat-value">--</span></p>
+                <p>Pomodoros: <span class="stat-value">0</span></p>
             </div>
         </div>
 
         <!-- Working On (Subject + Subtopic + Todo) -->
         <div class="left-section">
             <h3 class="panel-title">Current Focus</h3>
-            <div class="subject-container" id="subject-container" style="position: relative; top: auto; left: auto; transform: none; background: transparent; border: none; padding: 0; backdrop-filter: none; width: 100%; display: flex; justify-content: flex-start;">
+            <div class="subject-container" id="subject-container" style="position: relative; top: auto; left: auto; transform: none; background: transparent; border: none; padding: 0; backdrop-filter: none; width: 100%; display: flex; justify-content: flex-start; z-index: 100;">
                 <button id="subject-icon-btn" onclick="toggleEmojiPicker()" style="background: transparent; border: none; cursor: pointer; font-size: 2.5vh; margin-right: 0.5vw; padding: 0;">📚</button>
                 <div style="position: relative; display: flex; flex-direction: column; width: 100%;">
-                    <input type="text" id="subject-input" placeholder="What are you working on?" maxlength="40" autocomplete="off" onfocus="showSubjectDropdown()" oninput="filterSubjectDropdown()" style="width: 100%; text-align: left;">
-                    <div id="subject-dropdown" class="subject-dropdown" style="display: none;"></div>
+                    <input type="text" id="subject-input" placeholder="What are you working on?" maxlength="40" autocomplete="off" onfocus="showSubjectDropdown()" oninput="filterSubjectDropdown()" style="width: 100%; text-align: left; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); padding: 0.5vh 1vw; border-radius: 10px; color: white;">
+                    <div id="subject-dropdown" class="subject-dropdown" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; z-index: 1000; background: rgba(20,20,20,0.95); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; margin-top: 5px; max-height: 20vh; overflow-y: auto; backdrop-filter: blur(15px);"></div>
                 </div>
             </div>
             
@@ -105,7 +105,13 @@
             <!-- To-Do List -->
             <div class="todo-list-container" style="margin-top: 2vh; width: 100%;">
                 <ul id="todo-list" style="list-style: none; padding: 0; text-align: left; color: white; font-size: 1.8vh;">
-                    <li style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;"><input type="checkbox" style="accent-color: var(--primary-color);"> <span>Read chapter 1</span></li>
+                    <li style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                        <label class="custom-checkbox">
+                            <input type="checkbox">
+                            <span class="checkmark"></span>
+                        </label>
+                        <span>Example Task</span>
+                    </li>
                 </ul>
                 <div style="display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.2); margin-top: 1vh;">
                     <span class="material-icons" style="color: rgba(255,255,255,0.5); font-size: 1.8vh; margin-right: 5px;">add</span>
@@ -113,6 +119,11 @@
                 </div>
             </div>
         </div>
+
+        <!-- Fullscreen Analytics Button -->
+        <button id="analytics-button" class="analytics-btn-inline" onclick="alert('Analytics Dashboard coming soon!')" style="position: absolute; bottom: 2vw; right: 2vw; padding: 1vh; border-radius: 50%; background: transparent; border: none; width: auto;">
+            <span class="material-icons" style="font-size: 3vh;">bar_chart</span>
+        </button>
     </div>
     <!--<div class="controls" id="controls">
         <label for="duration">Set Timer (minutes):</label>

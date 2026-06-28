@@ -178,7 +178,7 @@
         }
         /* Dimensione testo timer */
         .time {
-            font-size: clamp(4rem, 20vw, 8rem);
+            font-size: clamp(4.2rem, 21vw, 8.4rem);
             font-weight: bold;
             position: relative;
             display: flex;
@@ -1909,3 +1909,69 @@
         .analytics-btn-inline:hover {
             background: var(--primary-color);
         }
+
+        /* Timer Running States */
+        .left-panel {
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+        body.timer-running .left-panel {
+            transform: translateX(-150%);
+            opacity: 0;
+            pointer-events: none;
+        }
+        body.timer-running .timer-container {
+            left: 50% !important;
+        }
+        body.timer-running .controls-container {
+            left: 50% !important;
+        }
+        body.timer-running .break-timer-large {
+            left: 50% !important;
+        }
+        body.timer-running #subtitle {
+            left: 50% !important;
+        }
+
+        /* Checkbox Custom CSS */
+        .custom-checkbox {
+            position: relative;
+            display: inline-block;
+            width: 2.2vh;
+            height: 2.2vh;
+            cursor: pointer;
+        }
+        .custom-checkbox input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            margin: 0;
+        }
+        .checkmark {
+            position: absolute;
+            top: 0; left: 0;
+            height: 2.2vh; width: 2.2vh;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+        .custom-checkbox input:checked ~ .checkmark {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+            left: 0.6vh;
+            top: 0.2vh;
+            width: 0.5vh;
+            height: 1.1vh;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+        .custom-checkbox input:checked ~ .checkmark:after {
+            display: block;
+        }
+

@@ -308,6 +308,10 @@ function togglePlayPause() {
         playIcon.style.display = "block";
         pauseIcon.style.display = "none";
     }
+    
+    // Toggle body class for centering layout
+    document.body.classList.toggle("timer-running", isRunning);
+
     const buttons = document.querySelectorAll('.modern-button');
     buttons.forEach(button => {
         button.disabled = false; // Non disabilitare i bottoni
