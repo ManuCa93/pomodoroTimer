@@ -172,7 +172,7 @@
         }
         /* Dimensione testo timer */
         .time {
-            font-size: clamp(9rem, 17vh, 5rem);
+            font-size: clamp(4rem, 18vw, 10rem);
             font-weight: bold;
             position: relative;
             display: flex;
@@ -250,11 +250,11 @@
             height: min(42vw, 150px) !important;
         }
         .timer-small .time {
-            font-size:  clamp(1rem, 17vh, 5rem);
+            font-size: clamp(1.5rem, 6vw, 4rem);
         }
         /* Timer della pausa - testo */
         .break-timer-container .time {
-            font-size: clamp(1rem, 17vh, 5rem);
+            font-size: clamp(1.5rem, 6vw, 4rem);
             color: var(--break-color) !important;
         }
         /* Timer della pausa - diventa grande al centro */
@@ -266,7 +266,7 @@
             transform: translate(-50%, -50%);
         }
         .break-timer-large .time {
-            font-size: clamp(10rem, 17vh, 5rem);
+            font-size: clamp(4rem, 18vw, 10rem);
             color: var(--break-color) !important;
         }
         /* Nasconde il cerchio del timer piccolo inizialmente */
@@ -1638,4 +1638,117 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             font-weight: 700;
+        }
+
+        /* =======================================================
+           RESPONSIVE DESIGN (Tablets & Mobile)
+           ======================================================= */
+        @media screen and (max-width: 1024px) { /* iPad e Tablet */
+            #subject-input {
+                width: 50vw;
+            }
+            #subject-input:focus {
+                width: 60vw;
+            }
+            .settings-group {
+                width: 20vw;
+            }
+            .popup-content {
+                width: 80vw;
+            }
+            .controls-container button {
+                width: 16vw;
+            }
+            .open-settings-btn {
+                width: 9vmax;
+                height: 9vmax;
+            }
+        }
+
+        @media screen and (max-width: 768px) { /* Smartphone */
+            #main-title {
+                font-size: 3vh;
+                top: 4vh;
+            }
+            .subject-container {
+                top: 10vh;
+            }
+            #subject-input {
+                width: 70vw;
+                font-size: 2.5vh;
+            }
+            #subject-input:focus {
+                width: 80vw;
+            }
+            #subtitle {
+                top: 16vh;
+                font-size: 2vh;
+                width: 90vw;
+            }
+            .popup-content {
+                width: 95vw;
+                padding: 3vh 2vw;
+            }
+            .settings-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 2vh;
+            }
+            .settings-group {
+                width: 60vw;
+            }
+            .controls-container {
+                gap: 4vw;
+            }
+            .controls-container button {
+                width: 18vw;
+                height: 7vh;
+                font-size: 3vh;
+            }
+            .modern-button .material-icons {
+                font-size: 5rem;
+            }
+            svg {
+                width: 80vw;
+                height: 80vw;
+            }
+            .break-timer-container {
+                width: 30vw;
+                height: 30vw;
+            }
+            .timer-small {
+                width: 30vw !important;
+                height: 30vw !important;
+            }
+            .break-timer-reset {
+                width: 30vw !important;
+                height: 30vw !important;
+                left: 75% !important;
+                top: 75% !important;
+            }
+            .close-btn-top {
+                right: 2rem;
+                top: 2rem;
+                font-size: 3rem;
+            }
+            .close-btn-top2 {
+                right: 2rem;
+                top: 2rem;
+                font-size: 3rem;
+            }
+            .open-settings-btn {
+                width: 12vmax;
+                height: 12vmax;
+                font-size: 6vmax;
+                left: 2vw;
+                top: 2vh;
+            }
+            .button-group {
+                flex-direction: column;
+                gap: 2vh;
+            }
+            .save-btn, .close-btn {
+                width: 80%;
+                font-size: 2.5vh;
+            }
         }
