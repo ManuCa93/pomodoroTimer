@@ -1284,3 +1284,45 @@ document.addEventListener("click", function(event) {
     }
 });
 
+
+// ====== STATS LOGIC ======
+function initStats() {
+    const today = new Date().toDateString();
+    if (!appData.stats || appData.stats.date !== today) {
+        appData.stats = { date: today, pomodoros: 0, workMinutes: 0 };
+        saveAppData();
+    }
+}
+
+function recordPomodoroStat(seconds) {
+    initStats();
+    appData.stats.pomodoros++;
+    appData.stats.workMinutes += Math.floor(seconds / 60);
+    saveAppData();
+    updateStatsUI();
+}
+
+function updateStatsUI() {
+    initStats();
+    const statsContainer = document.getElementById("stats-content");
+    if(statsContainer) {
+        const vals = statsContainer.querySelectorAll(".stat-value");
+        if(vals.length >= 2) {
+            let mins = appData.stats.workMinutes;
+            let hrs = Math.floor(mins / 60);
+            let remMins = mins % 60;
+            vals[0].textContent = hrs > 0 ? `${hrs}h ${remMins}m` : `${remMins}m`;
+            vals[1].textContent = appData.stats.pomodoros;
+        }
+        const fill = statsContainer.querySelector(".stat-fill");
+        if(fill) {
+            // Assume goal is 8 pomodoros
+            let perc = Math.min((appData.stats.pomodoros / 8) * 100, 100);
+            fill.style.width = `${perc}%`;
+        }
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    updateStatsUI();
+});

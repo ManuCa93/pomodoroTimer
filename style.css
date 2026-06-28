@@ -1922,14 +1922,20 @@
             opacity: 0;
             pointer-events: none;
         }
-        body.timer-running .timer-container, body.panel-collapsed .timer-container {
+        body.timer-running .timer-container:not(.timer-small), body.panel-collapsed .timer-container:not(.timer-small) {
             left: 50% !important;
+        }
+        body.timer-running .timer-small, body.panel-collapsed .timer-small {
+            left: 85% !important;
         }
         body.timer-running .controls-container, body.panel-collapsed .controls-container {
             left: 50% !important;
         }
         body.timer-running .break-timer-large, body.panel-collapsed .break-timer-large {
             left: 50% !important;
+        }
+        body.timer-running .break-timer:not(.break-timer-large), body.panel-collapsed .break-timer:not(.break-timer-large) {
+            left: 85% !important;
         }
         body.timer-running #subtitle, body.panel-collapsed #subtitle {
             left: 50% !important;
@@ -2004,4 +2010,10 @@
         body.panel-collapsed .restore-panel-btn {
             left: 0;
         }
+
+
+/* Smooth global transitions for timers and controls */
+.timer-container, .break-timer, .controls-container, #subtitle {
+    transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s ease-in-out;
+}
 
