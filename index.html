@@ -78,7 +78,7 @@
         <div class="left-section">
             <h3 class="panel-title" style="display: flex; justify-content: space-between; align-items: center;">
                 Recent Stats
-                <span class="material-icons" style="font-size: 2vh; cursor: pointer; color: rgba(255,255,255,0.5);" onclick="document.getElementById('stats-content').style.display = document.getElementById('stats-content').style.display === 'none' ? 'block' : 'none'">expand_more</span>
+                <span class="material-icons" style="font-size: 2vh; cursor: pointer; color: rgba(255,255,255,0.5);" onclick="document.body.classList.toggle('panel-collapsed')">keyboard_double_arrow_left</span>
             </h3>
             <div id="stats-content" class="stats-content">
                 <p>Today: <span class="stat-value">--</span></p>
@@ -97,7 +97,10 @@
                 </div>
             </div>
             
-            <!-- Removed subtopic-container -->
+            <div class="subtopic-container" id="subtopic-container" style="position: relative; top: auto; margin-top: 1vh; width: 100%; display: flex; align-items: center; justify-content: flex-start; padding: 0; border: none; background: transparent;">
+                <span class="material-icons" style="color: rgba(255,255,255,0.5); font-size: 2vh; margin-right: 0.5vw;">subdirectory_arrow_right</span>
+                <input type="text" id="subtopic-input" placeholder="Specific topic or To-Do" maxlength="60" autocomplete="off" style="width: 100%; background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); font-size: 1.8vh; font-family: 'Libre Franklin', sans-serif; outline: none; padding-bottom: 0.2vh;">
+            </div>
 
             <!-- To-Do List -->
             <div class="todo-list-container" style="margin-top: 2vh; width: 100%;">
@@ -112,7 +115,7 @@
                 </ul>
                 <div style="display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.2); margin-top: 1vh;">
                     <span class="material-icons" style="color: rgba(255,255,255,0.5); font-size: 1.8vh; margin-right: 5px;">add</span>
-                    <input type="text" id="new-todo-input" placeholder="Add a task..." style="background: transparent; border: none; color: white; outline: none; font-family: 'Libre Franklin', sans-serif; font-size: 1.8vh; width: 100%;">
+                    <input type="text" id="new-todo-input" placeholder="Add a task..." style="background: transparent; border: none; color: white; outline: none; font-family: 'Libre Franklin', sans-serif; font-size: 1.8vh; width: 100%;" onkeypress="addTodo(event)">
                 </div>
             </div>
         </div>

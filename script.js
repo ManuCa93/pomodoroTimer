@@ -1146,3 +1146,29 @@ document.addEventListener("click", function(event) {
         dropdown.style.display = "none";
     }
 });
+
+// ========== TO-DO LIST LOGIC ==========
+function addTodo(event) {
+    if (event.key === "Enter") {
+        const input = document.getElementById("new-todo-input");
+        const val = input.value.trim();
+        if (val) {
+            const ul = document.getElementById("todo-list");
+            const li = document.createElement("li");
+            li.style.display = "flex";
+            li.style.alignItems = "center";
+            li.style.gap = "10px";
+            li.style.marginBottom = "8px";
+            li.innerHTML = `
+                <label class="custom-checkbox">
+                    <input type="checkbox">
+                    <span class="checkmark"></span>
+                </label>
+                <span>${val}</span>
+            `;
+            ul.appendChild(li);
+            input.value = "";
+        }
+    }
+}
+

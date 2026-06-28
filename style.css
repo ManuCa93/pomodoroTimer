@@ -892,18 +892,21 @@
             position: absolute;
             top: 4vh;
             left: 65%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) translateY(0);
             font-size: 2.5vh;
             font-weight: normal;
-            color: var(--primary-color); /* Colore coerente con la pagina */
-            opacity: 1; /* Il sottotitolo è sempre visibile */
-            transform: translateY(0);
-            transition: opacity 2.5s ease, transform 2.5s ease, color 2.5s ease; /* Aggiunto 'color 0.5s ease' */
+            color: var(--primary-color);
+            opacity: 1;
+            transition: opacity 2.5s ease, transform 2.5s ease, color 2.5s ease, left 0.5s ease;
+        }
+
+        .panel-collapsed #subtitle {
+            left: 50%;
         }
 
         #subtitle.hidden-title {
             opacity: 0;
-            transform: translateY(-5vh);
+            transform: translateX(-50%) translateY(-5vh);
         }
 
         #main-title {
@@ -921,7 +924,7 @@
             }
             50% {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateX(-50%) translateY(0);
             }
             100% {
                 opacity: 1;
@@ -938,15 +941,15 @@
 
         @keyframes subtitleFloat {
             0% {
-                transform: translateY(0);
+                transform: translateX(-50%) translateY(0);
                 opacity: 0.8;
             }
             50% {
-                transform: translateY(-1vh);
+                transform: translateX(-50%) translateY(-1vh);
                 opacity: 1;
             }
             100% {
-                transform: translateY(0);
+                transform: translateX(-50%) translateY(0);
                 opacity: 1;
             }
         }
@@ -1914,21 +1917,21 @@
         .left-panel {
             transition: transform 0.5s ease, opacity 0.5s ease;
         }
-        body.timer-running .left-panel {
+        body.timer-running .left-panel, body.panel-collapsed .left-panel {
             transform: translateX(-150%);
             opacity: 0;
             pointer-events: none;
         }
-        body.timer-running .timer-container {
+        body.timer-running .timer-container, body.panel-collapsed .timer-container {
             left: 50% !important;
         }
-        body.timer-running .controls-container {
+        body.timer-running .controls-container, body.panel-collapsed .controls-container {
             left: 50% !important;
         }
-        body.timer-running .break-timer-large {
+        body.timer-running .break-timer-large, body.panel-collapsed .break-timer-large {
             left: 50% !important;
         }
-        body.timer-running #subtitle {
+        body.timer-running #subtitle, body.panel-collapsed #subtitle {
             left: 50% !important;
         }
 
