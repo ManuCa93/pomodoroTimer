@@ -68,8 +68,17 @@
 
     <h1 id="main-title" class="fade-in">POMODORO TIMER</h1>
     <div class="subject-container fade-in" id="subject-container">
-        <span class="material-icons" style="color: var(--primary-color); font-size: 2.5vh; margin-right: 0.5vw;">local_offer</span>
-        <input type="text" id="subject-input" placeholder="What are you working on?" maxlength="40" autocomplete="off">
+        <button id="subject-icon-btn" onclick="toggleEmojiPicker()" style="background: transparent; border: none; cursor: pointer; font-size: 2.5vh; margin-right: 0.5vw; padding: 0;">📚</button>
+        <div style="position: relative; display: flex; flex-direction: column;">
+            <input type="text" id="subject-input" placeholder="What are you working on?" maxlength="40" autocomplete="off" onfocus="showSubjectDropdown()" oninput="filterSubjectDropdown()">
+            <div id="subject-dropdown" class="subject-dropdown" style="display: none;"></div>
+        </div>
+    </div>
+    
+    <!-- Subtopic Input -->
+    <div class="subtopic-container fade-in" id="subtopic-container" style="display: none;">
+        <span class="material-icons" style="color: rgba(255,255,255,0.5); font-size: 2vh; margin-right: 0.5vw;">subdirectory_arrow_right</span>
+        <input type="text" id="subtopic-input" placeholder="Specific topic or To-Do" maxlength="60" autocomplete="off">
     </div>
     <h2 id="subtitle">1st pomodoro, 4 tomatoes left before the long break!</h2>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -97,7 +106,9 @@
     <button id="settings-button-menu" class="settings-btn-icon" onclick="openInfoPopup()">
         <span class="material-icons">settings</span>
     </button>    
-
+    <button id="analytics-button" class="analytics-btn-icon" onclick="alert('Analytics Dashboard coming soon!')">
+        <span class="material-icons">bar_chart</span>
+    </button>
     <!-- Minimal Modern Pop-up -->
     <div id="pomodoro-settings" class="popup">
         <div class="popup-content">
@@ -227,10 +238,17 @@
 
                     <!-- Bubbles Section -->
                     <div class="settings-section">
-                        <h4>Bubbles</h4>
+                        <h4>Display & Visuals</h4>
                         <div class="settings-items">
                             <div class="setting-item">
-                                <label for="bubbles-toggle">Enable</label>
+                                <label for="subtitle-toggle">Show subtitle</label>
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="subtitle-toggle" checked onchange="toggleSubtitle()">
+                                    <span class="toggle-slider"></span>
+                                </div>
+                            </div>
+                            <div class="setting-item">
+                                <label for="bubbles-toggle">Enable Bubbles</label>
                                 <div class="toggle-switch">
                                     <input type="checkbox" id="bubbles-toggle" checked>
                                     <span class="toggle-slider"></span>

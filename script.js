@@ -1086,3 +1086,69 @@ document.addEventListener('visibilitychange', () => {
         updatePageTitle();
     }
 });
+
+// ========== SUBTITLE TOGGLE ==========
+function toggleSubtitle() {
+    const subtitle = document.getElementById("subtitle");
+    const toggle = document.getElementById("subtitle-toggle");
+    if (toggle && subtitle) {
+        subtitle.style.display = toggle.checked ? "block" : "none";
+    }
+}
+
+// ========== NOTION-STYLE SUBJECT INPUT ==========
+const savedSubjects = ["Project A", "Math Exam", "Development", "Reading"];
+
+function toggleEmojiPicker() {
+    // Semplice selettore emoji sequenziale (mockup)
+    const emojis = ["📚", "💻", "🧠", "🏋️", "🎨", "📝"];
+    const btn = document.getElementById("subject-icon-btn");
+    let nextIndex = (emojis.indexOf(btn.innerText) + 1) % emojis.length;
+    btn.innerText = emojis[nextIndex];
+}
+
+function showSubjectDropdown() {
+    const dropdown = document.getElementById("subject-dropdown");
+    if(dropdown) {
+        dropdown.style.display = "block";
+        filterSubjectDropdown();
+    }
+}
+
+function filterSubjectDropdown() {
+    const input = document.getElementById("subject-input").value.toLowerCase();
+    const dropdown = document.getElementById("subject-dropdown");
+    if(!dropdown) return;
+    
+    dropdown.innerHTML = "";
+    let matches = savedSubjects.filter(s => s.toLowerCase().includes(input));
+    
+    if (matches.length === 0 && input.trim() !== "") {
+        matches = [`Create new: "${input}"`];
+    }
+    
+    matches.forEach(match => {
+        const div = document.createElement("div");
+        div.className = "subject-dropdown-item";
+        div.innerText = match;
+        div.onclick = function() {
+            let selected = match.replace('Create new: "', '').replace('"', '');
+            document.getElementById("subject-input").value = selected;
+            dropdown.style.display = "none";
+            document.getElementById("subtopic-container").style.display = "flex"; // Show subtopic
+            if (!savedSubjects.includes(selected)) {
+                savedSubjects.push(selected);
+            }
+        };
+        dropdown.appendChild(div);
+    });
+}
+
+// Nascondi dropdown al clic fuori
+document.addEventListener("click", function(event) {
+    const container = document.getElementById("subject-container");
+    const dropdown = document.getElementById("subject-dropdown");
+    if (container && dropdown && !container.contains(event.target)) {
+        dropdown.style.display = "none";
+    }
+});

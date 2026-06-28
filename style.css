@@ -30,7 +30,7 @@
         /* Stile del Titolo */
         #main-title {
             position: absolute;
-            top: 5vh; /* Lo tiene al centro in alto */
+            top: 2.5vh; /* Spostato più in alto */
             font-size: 4vh;
             font-weight: bold;
             color: var(--primary-color);
@@ -160,8 +160,8 @@
         }
         svg {
             position: absolute;
-            width: min(195%, 675px);
-            height: min(195%, 675px);
+            width: min(185%, 640px);
+            height: min(185%, 640px);
         }
         circle {
             fill: none;
@@ -174,7 +174,7 @@
         }
         /* Dimensione testo timer */
         .time {
-            font-size: clamp(5.625rem, 27vw, 11.25rem);
+            font-size: clamp(4rem, 20vw, 8rem);
             font-weight: bold;
             position: relative;
             display: flex;
@@ -228,7 +228,7 @@
 
         /* Icona visibile e interattiva */
         .modern-button .material-icons {
-            font-size: 7rem; /* Dimensione dell'icona */
+            font-size: 5rem; /* Dimensione dell'icona */
             color: var(--primary-color); /* Colore dell'icona */
             transition: color 0.3s ease, transform 0.2s ease; /* Animazioni per colore e scala */
         }
@@ -236,7 +236,7 @@
         /* Hover sull'icona */
         .modern-button:hover .material-icons {
             color: var(--buttons-action); /* Cambia il colore dell'icona in hover */
-            transform: scale(1.5); /* Leggero ingrandimento */
+            transform: scale(1.2); /* Leggero ingrandimento */
         }
 
         /* Effetto di clic sull'icona */
@@ -248,27 +248,27 @@
         .timer-small {
             left: 15% !important; /* Ancora più a sinistra */
             top: 70% !important; /* Più in basso */
-            width: min(63vw, 225px) !important;
-            height: min(63vw, 225px) !important;
+            width: min(50vw, 180px) !important;
+            height: min(50vw, 180px) !important;
         }
         .timer-small .time {
-            font-size: clamp(2.25rem, 9vw, 6rem);
+            font-size: clamp(1.5rem, 7vw, 4rem);
         }
         /* Timer della pausa - testo */
         .break-timer-container .time {
-            font-size: clamp(2.25rem, 9vw, 6rem);
+            font-size: clamp(1.5rem, 7vw, 4rem);
             color: var(--break-color) !important;
         }
         /* Timer della pausa - diventa grande al centro */
         .break-timer-large {
             left: 50% !important;
             top: 50% !important;
-            width: min(150vw, 900px);
-            height: min(150vw, 900px);
+            width: min(120vw, 700px);
+            height: min(120vw, 700px);
             transform: translate(-50%, -50%);
         }
         .break-timer-large .time {
-            font-size: clamp(5.625rem, 27vw, 11.25rem);
+            font-size: clamp(4rem, 20vw, 8rem);
             color: var(--break-color) !important;
         }
         /* Nasconde il cerchio del timer piccolo inizialmente */
@@ -592,7 +592,7 @@
         }*/
 
         /* BUTTON + MINIMAL */
-        .open-settings-btn, .settings-btn-icon {
+        .open-settings-btn, .settings-btn-icon, .analytics-btn-icon {
             position: absolute;
             background: transparent;
             color: var(--break-color);
@@ -616,19 +616,31 @@
         }
 
         .settings-btn-icon {
-            top: 8vh;
-            left: calc(4vw + 10vmax); /* Posizionato di fianco a + */
-            width: 6vmax;
-            height: 6vmax;
+            top: calc(8vh + 1.75vmax); /* Centrato rispetto all'altezza 8vmax del bottone + (8 - 4.5)/2 = 1.75 */
+            left: calc(4vw + 9vmax); /* Affiancato */
+            width: 4.5vmax; /* Ridotto del 25% da 6vmax */
+            height: 4.5vmax;
         }
         
         .settings-btn-icon .material-icons {
-            font-size: 4vmax;
+            font-size: 3vmax;
+            color: var(--break-color);
+        }
+
+        .analytics-btn-icon {
+            top: calc(8vh + 1.75vmax);
+            left: calc(4vw + 14.5vmax); /* A destra del settings-btn-icon */
+            width: 4.5vmax;
+            height: 4.5vmax;
+        }
+        
+        .analytics-btn-icon .material-icons {
+            font-size: 3vmax;
             color: var(--break-color);
         }
 
         /* EFFETTI HOVER */
-        .open-settings-btn:hover, .settings-btn-icon:hover {
+        .open-settings-btn:hover, .settings-btn-icon:hover, .analytics-btn-icon:hover {
             transform: scale(1.15) rotate(180deg);
             color: var(--break-color);
             opacity: 0.7;
@@ -808,9 +820,71 @@
             width: 28vw;
         }
         
+        .subject-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: rgba(20, 20, 20, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-top: 10px;
+            max-height: 20vh;
+            overflow-y: auto;
+            backdrop-filter: blur(15px);
+            z-index: 100;
+        }
+        .subject-dropdown-item {
+            padding: 1.5vh;
+            color: white;
+            cursor: pointer;
+            text-align: left;
+            font-size: 1.8vh;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 1vw;
+        }
+        .subject-dropdown-item:hover {
+            background: var(--primary-color);
+        }
+
+        .subtopic-container {
+            position: absolute;
+            top: 19vh;
+            z-index: 9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 0.2vh 1vw;
+            transition: all 0.3s ease;
+        }
+        .subtopic-container.hidden-title {
+            opacity: 0;
+            transform: translateY(-5vh);
+            pointer-events: none;
+        }
+        #subtopic-input {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.8vh;
+            font-family: 'Libre Franklin', sans-serif;
+            text-align: left;
+            width: 15vw;
+            outline: none;
+            transition: width 0.3s ease;
+        }
+        #subtopic-input:focus {
+            width: 20vw;
+            border-bottom: 1px solid var(--primary-color);
+        }
+
         #subtitle {
             position: absolute;
-            top: 19vh; /* Spostato più in basso per fare spazio all'input */
+            top: 24vh; /* Spostato in basso per fare spazio al subtopic */
             font-size: 2.5vh;
             font-weight: normal;
             color: var(--primary-color); /* Colore coerente con la pagina */
@@ -1694,7 +1768,7 @@
                 width: 65vw;
             }
             #subtitle {
-                top: 16vh;
+                top: 22vh;
                 font-size: 2vh;
                 width: 90vw;
             }
