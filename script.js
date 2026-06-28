@@ -1122,12 +1122,13 @@ function filterSubjectDropdown() {
         matches = [`Create new: "${input}"`];
     }
     
+
     matches.forEach(match => {
         const div = document.createElement("div");
         div.className = "subject-dropdown-item";
         div.innerText = match;
         div.onclick = function() {
-            let selected = match.replace('Create new: "', '').replace('"', '');
+            let selected = match.replace("Create new: \"", "").replace("\"", "");
             document.getElementById("subject-input").value = selected;
             dropdown.style.display = "none";
             document.getElementById("subtopic-container").style.display = "flex";
@@ -1135,12 +1136,12 @@ function filterSubjectDropdown() {
             if (!savedSubjects.includes(selected)) {
                 savedSubjects.push(selected);
             }
+            if (typeof loadTasks === "function") loadTasks();
         };
         dropdown.appendChild(div);
     });
 }
 
-// Nascondi dropdown al clic fuori
 document.addEventListener("click", function(event) {
     const container = document.getElementById("subject-container");
     const dropdown = document.getElementById("subject-dropdown");
@@ -1149,47 +1150,137 @@ document.addEventListener("click", function(event) {
     }
 });
 
-// ========== TO-DO LIST LOGIC ==========
+// ====== APP DATA & PERSISTENCE ======
+let appData = JSON.parse(localStorage.getItem("pomodoroAppData")) || { projects: {} };
+
+function saveAppData() {
+    localStorage.setItem("pomodoroAppData", JSON.stringify(appData));
+}
+
+function getCurrentProject() { return document.getElementById("subject-input").value.trim(); }
+function getCurrentTopic() { return document.getElementById("subtopic-input").value.trim(); }
+
+function initTopic(projectName, topicName) {
+    if (!appData.projects[projectName]) { appData.projects[projectName] = { subtopics: [], tasks: { "": [] } }; }
+    if (topicName && !appData.projects[projectName].subtopics.includes(topicName)) { appData.projects[projectName].subtopics.push(topicName); }
+    if (!appData.projects[projectName].tasks[topicName]) { appData.projects[projectName].tasks[topicName] = []; }
+    saveAppData();
+}
+
+function loadTasks() {
+    const proj = getCurrentProject();
+    const topic = getCurrentTopic();
+    const ul = document.getElementById("todo-list");
+    ul.innerHTML = "";
+    if (!proj) return;
+    initTopic(proj, topic);
+    const tasks = appData.projects[proj].tasks[topic] || [];
+    tasks.forEach((t, i) => {
+        const li = document.createElement("li");
+        li.style.display = "flex"; li.style.alignItems = "center"; li.style.gap = "10px"; li.style.marginBottom = "8px";
+        li.innerHTML = `
+            <label class="custom-checkbox">
+                <input type="checkbox" onchange="toggleTask(${i}, this.checked)" ${t.done ? "checked" : ""}>
+                <span class="checkmark"></span>
+            </label>
+            <span style="text-decoration: ${t.done ? "line-through" : "none"}; opacity: ${t.done ? "0.5" : "1"}; flex-grow: 1;">${t.text}</span>
+            <span class="material-icons" style="font-size:2vh; cursor:pointer; color:rgba(255,255,255,0.3)" onclick="deleteTask(${i})">close</span>
+        `;
+        ul.appendChild(li);
+    });
+}
+
+window.toggleTask = function(index, isDone) {
+    const proj = getCurrentProject(); const topic = getCurrentTopic();
+    appData.projects[proj].tasks[topic][index].done = isDone;
+    saveAppData(); loadTasks();
+};
+
+window.deleteTask = function(index) {
+    const proj = getCurrentProject(); const topic = getCurrentTopic();
+    appData.projects[proj].tasks[topic].splice(index, 1);
+    saveAppData(); loadTasks();
+};
+
 function addTodo(event) {
     if (event.key === "Enter") {
         const input = document.getElementById("new-todo-input");
         const val = input.value.trim();
-        if (val) {
-            const ul = document.getElementById("todo-list");
-            const li = document.createElement("li");
-            li.style.display = "flex";
-            li.style.alignItems = "center";
-            li.style.gap = "10px";
-            li.style.marginBottom = "8px";
-            li.innerHTML = `
-                <label class="custom-checkbox">
-                    <input type="checkbox">
-                    <span class="checkmark"></span>
-                </label>
-                <span>${val}</span>
-            `;
-            ul.appendChild(li);
-            input.value = "";
+        const proj = getCurrentProject(); const topic = getCurrentTopic();
+        if (val && proj) {
+            initTopic(proj, topic);
+            appData.projects[proj].tasks[topic].push({ text: val, done: false });
+            saveAppData(); input.value = ""; loadTasks();
+        } else if (!proj) {
+            alert("Please select a project first!");
         }
     }
 }
 
-
-
-// Hide/Show subtopic and todo list based on subject input
 document.addEventListener("DOMContentLoaded", () => {
     const subjectInput = document.getElementById("subject-input");
+    const subtopicInput = document.getElementById("subtopic-input");
     if(subjectInput) {
         subjectInput.addEventListener("input", function() {
             const val = this.value.trim();
             if (val.length > 0) {
                 document.getElementById("subtopic-container").style.display = "flex";
                 document.getElementById("todo-list-container").style.display = "block";
+                loadTasks();
             } else {
                 document.getElementById("subtopic-container").style.display = "none";
                 document.getElementById("todo-list-container").style.display = "none";
             }
         });
+    }
+    if(subtopicInput) {
+        subtopicInput.addEventListener("input", () => loadTasks());
+    }
+    // Initial load
+    if (subjectInput && subjectInput.value.trim().length > 0) {
+        document.getElementById("subtopic-container").style.display = "flex";
+        document.getElementById("todo-list-container").style.display = "block";
+        loadTasks();
+    }
+});
+
+function showSubtopicDropdown() {
+    filterSubtopicDropdown();
+    document.getElementById("subtopic-dropdown").style.display = "block";
+}
+
+function filterSubtopicDropdown() {
+    const proj = getCurrentProject();
+    const input = getCurrentTopic();
+    const dropdown = document.getElementById("subtopic-dropdown");
+    dropdown.innerHTML = "";
+    if(!proj) return;
+    
+    let subtopics = (appData.projects[proj] && appData.projects[proj].subtopics) ? appData.projects[proj].subtopics : [];
+    let matches = subtopics.filter(s => s.toLowerCase().includes(input.toLowerCase()));
+    if (matches.length === 0 && input.trim() !== "") {
+        matches = [`Create new: "${input}"`];
+    }
+    
+    matches.forEach(match => {
+        const div = document.createElement("div");
+        div.className = "subject-dropdown-item";
+        div.innerText = match;
+        div.onclick = function() {
+            let selected = match.replace("Create new: \"", "").replace("\"", "");
+            document.getElementById("subtopic-input").value = selected;
+            dropdown.style.display = "none";
+            loadTasks();
+        };
+        dropdown.appendChild(div);
+    });
+}
+
+document.addEventListener("click", function(event) {
+    const container = document.getElementById("subtopic-container");
+    const dropdown = document.getElementById("subtopic-dropdown");
+    if (container && dropdown && !container.contains(event.target)) {
+        dropdown.style.display = "none";
     }
 });
 

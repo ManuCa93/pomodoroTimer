@@ -102,9 +102,12 @@
                 </div>
             </div>
             
-            <div class="subtopic-container" id="subtopic-container" style="display: none; position: relative; top: auto; margin-top: 1vh; width: 100%; align-items: center; justify-content: flex-start; padding: 0; border: none; background: transparent;">
-                <span class="material-icons" style="color: rgba(255,255,255,0.5); font-size: 2vh; margin-right: 0.5vw;">subdirectory_arrow_right</span>
-                <input type="text" id="subtopic-input" placeholder="Specific topic or To-Do" maxlength="60" autocomplete="off" style="width: 100%; background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); font-size: 1.8vh; font-family: 'Libre Franklin', sans-serif; outline: none; padding-bottom: 0.2vh;">
+            <div class="subtopic-container" id="subtopic-container" style="display: none; position: relative; top: auto; margin-top: 1vh; width: 100%; align-items: flex-start; justify-content: flex-start; padding: 0; border: none; background: transparent;">
+                <span class="material-icons" style="color: rgba(255,255,255,0.5); font-size: 2vh; margin-right: 0.5vw; margin-top: 0.5vh;">subdirectory_arrow_right</span>
+                <div style="position: relative; display: flex; flex-direction: column; width: 100%;">
+                    <input type="text" id="subtopic-input" placeholder="Specific topic (optional)" maxlength="60" autocomplete="off" onfocus="showSubtopicDropdown()" oninput="filterSubtopicDropdown()" style="width: 100%; background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); font-size: 1.8vh; font-family: 'Libre Franklin', sans-serif; outline: none; padding-bottom: 0.2vh;">
+                    <div id="subtopic-dropdown" class="subject-dropdown" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; z-index: 1000; background: rgba(20,20,20,0.95); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; margin-top: 5px; max-height: 20vh; overflow-y: auto; backdrop-filter: blur(15px);"></div>
+                </div>
             </div>
 
             <!-- To-Do List -->
