@@ -30,11 +30,12 @@
         /* Stile del Titolo */
         #main-title {
             position: absolute;
-            top: 2.5vh; /* Spostato più in alto */
-            font-size: 4vh;
+            top: 4vh;
+            left: 4vw;
+            font-size: 3vh;
             font-weight: bold;
             color: var(--primary-color);
-            text-align: center;
+            text-align: left;
             transition: opacity 0.5s ease, transform 0.5s ease;
         }
 
@@ -127,7 +128,7 @@
         .timer-container {
             position: absolute;
             top: 50%;
-            left: 50%;
+            left: 65%;
             transform: translate(-50%, -50%);
             display: flex;
             justify-content: center;
@@ -152,10 +153,13 @@
         }
         /* Controlli */
         .controls-container {
+            position: absolute;
+            top: 85vh;
+            left: 65%;
+            transform: translateX(-50%);
             display: flex;
             justify-content: center;
             gap: 6vw;
-            margin-top: 75vh;
             transition: opacity 0.5s ease, transform 0.5s ease; /* ← AGGIUNTO */
         }
         svg {
@@ -228,9 +232,9 @@
 
         /* Icona visibile e interattiva */
         .modern-button .material-icons {
-            font-size: 5rem; /* Dimensione dell'icona */
-            color: var(--primary-color); /* Colore dell'icona */
-            transition: color 0.3s ease, transform 0.2s ease; /* Animazioni per colore e scala */
+            font-size: 7rem; /* Ingranditi i bottoni in basso */
+            color: var(--primary-color);
+            transition: color 0.3s ease, transform 0.2s ease;
         }
 
         /* Hover sull'icona */
@@ -261,7 +265,7 @@
         }
         /* Timer della pausa - diventa grande al centro */
         .break-timer-large {
-            left: 50% !important;
+            left: 65% !important;
             top: 50% !important;
             width: min(120vw, 700px);
             height: min(120vw, 700px);
@@ -616,10 +620,12 @@
         }
 
         .settings-btn-icon {
-            top: calc(8vh + 1.75vmax); /* Centrato rispetto all'altezza 8vmax del bottone + (8 - 4.5)/2 = 1.75 */
-            left: calc(4vw + 9vmax); /* Affiancato */
-            width: 4.5vmax; /* Ridotto del 25% da 6vmax */
+            top: 4vh;
+            right: 4vw;
+            left: auto;
+            width: 4.5vmax;
             height: 4.5vmax;
+            z-index: 20;
         }
         
         .settings-btn-icon .material-icons {
@@ -884,7 +890,9 @@
 
         #subtitle {
             position: absolute;
-            top: 24vh; /* Spostato in basso per fare spazio al subtopic */
+            top: 4vh;
+            left: 65%;
+            transform: translateX(-50%);
             font-size: 2.5vh;
             font-weight: normal;
             color: var(--primary-color); /* Colore coerente con la pagina */
@@ -1838,4 +1846,66 @@
                 width: 80%;
                 font-size: 2.5vh;
             }
+        }
+        /* LEFT PANEL SPECCHIETTO */
+        .left-panel {
+            position: absolute;
+            top: 12vh;
+            left: 4vw;
+            width: 25vw;
+            height: 75vh;
+            background: rgba(20, 20, 20, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2vw;
+            backdrop-filter: blur(15px);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4vh;
+            z-index: 5;
+        }
+        .left-section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1vh;
+        }
+        .panel-title {
+            font-size: 2vh;
+            color: var(--break-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding-bottom: 0.5vh;
+            width: 100%;
+            text-align: left;
+        }
+        .stats-content {
+            font-size: 1.8vh;
+            color: white;
+            text-align: left;
+            line-height: 1.5;
+        }
+        .stat-value {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        .analytics-btn-inline {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 1vh 1vw;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 1vh;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background 0.3s;
+        }
+        .analytics-btn-inline:hover {
+            background: var(--primary-color);
         }
