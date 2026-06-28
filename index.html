@@ -90,7 +90,9 @@
     <!-- Button to open the settings pop-up -->
     <!-- Pomodoro Settings Button -->
     <!-- Pulsante per aprire le impostazioni -->
-    <button id="settings-button" class="open-settings-btn" onclick="openSettings()">+</button>
+    <button id="settings-button" class="open-settings-btn" onclick="openSettings()">
+        <span class="material-icons" style="font-size: inherit;">add</span>
+    </button>
     <button id="settings-button-menu" class="settings-btn-icon" onclick="openInfoPopup()">
         <span class="material-icons">settings</span>
     </button>    
@@ -123,8 +125,12 @@
             </div>
 
             <div class="button-group">
-                <button class="save-btn" onclick="saveSettings()">✔ Save</button>
-                <button class="close-btn-top" onclick="closeSettings()">✖</button>
+                <button class="save-btn" onclick="saveSettings()">
+                    <span class="material-icons" style="vertical-align: middle;">check</span> Save
+                </button>
+                <button class="close-btn-top" onclick="closeSettings()">
+                    <span class="material-icons">close</span>
+                </button>
             </div>
             <div>
                 <p id="save-message">Values Saved
@@ -159,17 +165,23 @@
     <div id="mini-timer-widget" class="mini-timer-widget" style="display: none;">
         <div class="mini-timer-header">
             <span class="mini-timer-label" id="mini-timer-label">Focus</span>
-            <button class="mini-timer-close" onclick="closeMiniTimer()">✖</button>
+            <button class="mini-timer-close" onclick="closeMiniTimer()">
+                <span class="material-icons" style="font-size: 20px;">close</span>
+            </button>
         </div>
         <div class="mini-timer-display" id="mini-timer-display">25:00</div>
     </div>
     <div id="info-popup" class="popup info-menu-popup">
         <div class="popup-content info-menu-content">
             <!-- Pulsante di chiusura -->
-            <button class="close-btn-top2" onclick="closeInfoPopup()">✖</button>
+            <button class="close-btn-top2" onclick="closeInfoPopup()">
+                <span class="material-icons">close</span>
+            </button>
             
             <!-- Titolo del menu -->
-            <h2 id="menu-title" style="margin-bottom: 3vh; color: var(--primary-color); text-transform: uppercase; font-size: 2.5vmax;">⚙️ Settings</h2>
+            <h2 id="menu-title" style="margin-bottom: 3vh; color: var(--primary-color); text-transform: uppercase; font-size: 2.5vmax; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                <span class="material-icons" style="font-size: inherit;">settings</span> Settings
+            </h2>
             
             <!-- Menu principale con tabs -->
             <div class="info-menu-tabs">
@@ -312,7 +324,9 @@
         <div class="popup-content">
             <h2 id="edit-popup-title" style="margin-top: 5vh;">Edit Your Session</h2>
             <!-- Bottone di chiusura "X" -->
-            <button class="close-btn-top" onclick="closeEditModePopup()">✖</button>
+            <button class="close-btn-top" onclick="closeEditModePopup()">
+                <span class="material-icons">close</span>
+            </button>
     
             <!-- Menu originale per modificare i valori -->
             <div class="settings-container">
@@ -339,8 +353,12 @@
     
             <!-- Bottoni in basso -->
             <div class="button-group">
-                <button class="update-session-btn" onclick="updateSession()">🔄 Update Session</button>
-                <button class="stop-session-btn" onclick="stopSession()">🛑 Stop Session</button>
+                <button class="update-session-btn" onclick="updateSession()">
+                    <span class="material-icons" style="vertical-align: middle;">sync</span> Update Session
+                </button>
+                <button class="stop-session-btn" onclick="stopSession()">
+                    <span class="material-icons" style="vertical-align: middle;">stop</span> Stop Session
+                </button>
             </div>
     
             <!-- Messaggio "Values Saved" -->

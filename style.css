@@ -546,28 +546,28 @@
             width: 47%;
         }
 
-        /* BOTTONI CON EFFETTI */
+        /* BOTTONI CON EFFETTI MINIMALI */
         .save-btn {
-            background: linear-gradient(90deg, #32cd32, #228b22) !important;
-            color: var(--primary-color) !important;
-            box-shadow: 0px 1vmax 2vmax rgba(50, 205, 50, 0.3);
-            font-size: 1.8rem; /* Dimensione testo coerente */
-            padding: 1rem 2rem; /* Spazio interno sufficiente */
-            border: none; /* Rimuove il bordo */
-            border-radius: 10px; /* Arrotondamento per un aspetto moderno */
+            background: transparent !important;
+            color: limegreen !important;
+            box-shadow: none;
+            font-size: 1.8rem;
+            padding: 1rem 2rem;
+            border: 2px solid limegreen;
+            border-radius: 10px;
             cursor: pointer;
-            text-align: center; /* Allinea il testo */
-            width: auto; /* Imposta larghezza automatica */
-            position: relative; /* Cambiato da absolute a relative */
-            display: inline-block; /* Assicura che il pulsante abbia una larghezza e altezza appropriata */
-            margin: 1rem auto; /* Centra il pulsante verticalmente e orizzontalmente */
-            transition: all 0.3s ease-in-out; /* Per animazioni fluide */
+            text-align: center;
+            width: auto;
+            position: relative;
+            display: inline-block;
+            margin: 1rem auto;
+            transition: all 0.3s ease-in-out;
         }
 
         .save-btn:hover {
-            background: linear-gradient(270deg,#228b22, var(--primary-color)) !important;
+            background: limegreen !important;
             transform: scale(1.05);
-            color: rgb(2, 38, 2) !important;
+            color: black !important;
         }
 
         /*
@@ -582,37 +582,47 @@
             transform: scale(1.05);
         }*/
 
-        /* BOTTONE + GRANDE */
-        .open-settings-btn {
+        /* BUTTON + MINIMAL */
+        .open-settings-btn, .settings-btn-icon {
             position: absolute;
-            top: 8vh;
-            left: 4vw;
-            background: var(--break-color);
-            color: var(--background-color);
+            background: transparent;
+            color: var(--break-color);
             border: none;
-            border-radius: 50%;
-            width: 8vmax;
-            height: 8vmax;
-            font-size: 5vmax;
             font-weight: bold;
             cursor: pointer;
-            transition: background 0.3s ease, transform 0.2s ease, opacity 0.5s ease; /* ← aggiunto opacity */
+            transition: transform 0.2s ease, opacity 0.5s ease;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0px 2vmax 3vmax rgba(0, 0, 0, 0.3);
+            box-shadow: none;
+            outline: none;
+        }
+        
+        .open-settings-btn {
+            top: 8vh;
+            left: 4vw;
+            width: 8vmax;
+            height: 8vmax;
+            font-size: 5vmax;
+        }
+
+        .settings-btn-icon {
+            top: 8vh;
+            left: calc(4vw + 10vmax); /* Posizionato di fianco a + */
+            width: 6vmax;
+            height: 6vmax;
+        }
+        
+        .settings-btn-icon .material-icons {
+            font-size: 4vmax;
+            color: var(--break-color);
         }
 
         /* EFFETTI HOVER */
-        .open-settings-btn:hover {
-            background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), var(--break-color); /* COLORE SCURO */
-            /*filter: brightness(50%);*/
+        .open-settings-btn:hover, .settings-btn-icon:hover {
             transform: scale(1.15) rotate(180deg);
-            color: var(--background-color);
-        }
-
-        .open-settings-btn:active {
-            transform: scale(0.95) rotate(360deg);
+            color: var(--break-color);
+            opacity: 0.7;
         }
 
         /* ANIMAZIONE DI DISSOLVENZA */
@@ -688,16 +698,6 @@
             font-size: 2vmax;
             width: 47%;
             transition: all 0.3s ease-in-out;
-        }
-
-        .save-btn {
-            background: linear-gradient(90deg, #32cd32, #228b22);
-            box-shadow: 0px 1vmax 2vmax rgba(50, 205, 50, 0.3);
-        }
-
-        .save-btn:hover {
-            background: linear-gradient(90deg,var(--primary-color), #1e7a1e) !important;
-            transform: scale(1.05);
         }
 
         .close-btn-top2 {
@@ -901,24 +901,31 @@
         }
 
         .update-session-btn, .stop-session-btn {
-            background: var(--primary-color); 
-            color: white;
-            border: none;
+            background: transparent !important; 
+            color: var(--primary-color) !important;
+            border: 2px solid var(--primary-color);
             border-radius: 10px;
             padding: 1rem 2rem;
             font-size: 1.5rem;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5);
-            transition: background 0.3s ease, transform 0.2s ease;
+            box-shadow: none;
+            transition: all 0.3s ease;
+        }
+        
+        .stop-session-btn {
+            color: #cc0000 !important;
+            border-color: #cc0000;
         }
 
         .update-session-btn:hover {
-            background: linear-gradient(15deg, #1e7a1e, var(--primary-color)) !important;
+            background: var(--primary-color) !important;
+            color: var(--background-color) !important;
             transform: scale(1.05);
         }
         .stop-session-btn:hover {
-            background: linear-gradient(15deg, darkred, var(--primary-color)) !important;
+            background: #cc0000 !important;
+            color: white !important;
             transform: scale(1.05);
         }
         
