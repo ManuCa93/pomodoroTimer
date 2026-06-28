@@ -158,8 +158,8 @@
         }
         svg {
             position: absolute;
-            width: min(140%, 550px);
-            height: min(140%, 550px);
+            width: min(160%, 600px);
+            height: min(160%, 600px);
         }
         circle {
             fill: none;
@@ -172,7 +172,7 @@
         }
         /* Dimensione testo timer */
         .time {
-            font-size: clamp(4rem, 18vw, 10rem);
+            font-size: clamp(3rem, 14vw, 6rem);
             font-weight: bold;
             position: relative;
             display: flex;
@@ -266,7 +266,7 @@
             transform: translate(-50%, -50%);
         }
         .break-timer-large .time {
-            font-size: clamp(4rem, 18vw, 10rem);
+            font-size: clamp(3rem, 14vw, 6rem);
             color: var(--break-color) !important;
         }
         /* Nasconde il cerchio del timer piccolo inizialmente */
