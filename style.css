@@ -1925,8 +1925,10 @@
         body.timer-running .timer-container:not(.timer-small), body.panel-collapsed .timer-container:not(.timer-small) {
             left: 50% !important;
         }
-        body.timer-running .timer-small, body.panel-collapsed .timer-small {
+        .timer-small {
             left: 85% !important;
+            opacity: 0.3 !important;
+            transform: translate(-50%, -50%) scale(0.6) !important;
         }
         body.timer-running .controls-container, body.panel-collapsed .controls-container {
             left: 50% !important;
@@ -1934,8 +1936,10 @@
         body.timer-running .break-timer-large, body.panel-collapsed .break-timer-large {
             left: 50% !important;
         }
-        body.timer-running .break-timer:not(.break-timer-large), body.panel-collapsed .break-timer:not(.break-timer-large) {
+        .break-timer:not(.break-timer-large) {
             left: 85% !important;
+            opacity: 0.3 !important;
+            transform: translate(-50%, -50%) scale(0.6) !important;
         }
         body.timer-running #subtitle, body.panel-collapsed #subtitle {
             left: 50% !important;
