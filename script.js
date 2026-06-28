@@ -686,6 +686,7 @@ function toggleTitleVisibility() {
     
     const title = document.getElementById("main-title");
     const subtitle = document.getElementById("subtitle");
+    const subjectContainer = document.getElementById("subject-container");
 
     console.log("🎭 Controllo visibilità titolo. isRunning:", isRunning, "onBreak:", onBreak);
 
@@ -693,11 +694,19 @@ function toggleTitleVisibility() {
         console.log("👻 Nascondo il titolo!");
         title.classList.add("hidden-title");
         title.classList.remove("visible-title");
+        if(subjectContainer) {
+            subjectContainer.classList.add("hidden-title");
+            subjectContainer.classList.remove("fade-in");
+        }
         subtitle.classList.add("move-up"); // Sposta il sottotitolo più in alto
     } else {
         console.log("📢 Mostro il titolo!");
         title.classList.add("visible-title");
         title.classList.remove("hidden-title");
+        if(subjectContainer) {
+            subjectContainer.classList.remove("hidden-title");
+            subjectContainer.classList.add("fade-in");
+        }
         subtitle.classList.remove("move-up"); // Riporta il sottotitolo alla posizione originale
     }
 }

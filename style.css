@@ -334,22 +334,21 @@
         }
 
         .popup-content {
-            background: rgba(0, 0, 0, 0.01) !important; /* Trasparente al 20% */
-            backdrop-filter: blur(10px) !important; /* Effetto sfocato dietro */
+            background: rgba(30, 30, 30, 0.6) !important;
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
             padding: 4vh 4vw;
-            border-radius: 1.5vmax;
-            width: 100%;
-            height: 100%;
-            max-width: 100%;
-            max-height: 90vh;
-            height: 72vh;
+            border-radius: 2vmax;
+            width: 60vw;
+            max-width: 90%;
+            max-height: 80vh;
             text-align: center;
             color: white;
             display: flex;
             flex-direction: column;
             align-items: center;
-            box-shadow: none !important;
-            border: none !important;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37) !important;
         }
         /* TITOLI E TESTO */
         .popup-content h2 {
@@ -376,14 +375,19 @@
         }
 
         .settings-group {
-            background: #292929;
-            padding: 3vh;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2.5vh;
             border-radius: 1.5vmax;
             text-align: center;
-            width: 17vw; /* Increased size */
+            width: 17vw;
             min-width: 170px;
-            box-shadow: 0px 0.5vh 1vh rgba(0, 0, 0, 0.5);
-            transition: transform 0.2s ease-in-out;
+            box-shadow: none;
+            transition: transform 0.2s ease-in-out, background 0.2s;
+        }
+        .settings-group:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .open-settings-btn.edit-mode {
@@ -634,20 +638,7 @@
         /* General Pop-up Style */
         /* Enlarged pop-up for better layout */
         /* Enlarged pop-up */
-        .popup-content {
-            background: #1e1e1e;
-            padding: 4vh 4vw;
-            border-radius: 1.5vmax;
-            width: 60vw; /* More space */
-            max-width: 90%;
-            max-height: 75vh;
-            text-align: center;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            box-shadow: 0px 2vh 4vh rgba(255, 255, 255, 0.1);
-        }
+        /* .popup-content already defined above */
 
         /* Container for sections */
         .settings-container {
@@ -658,16 +649,7 @@
         }
 
         /* Modern box style */
-        .settings-group {
-            background: #292929;
-            padding: 2.5vh;
-            border-radius: 1.2vmax;
-            text-align: center;
-            width: 12vw;
-            min-width: 130px;
-            box-shadow: 0px 0.5vh 1vh rgba(0, 0, 0, 0.5);
-            transition: transform 0.2s ease-in-out;
-        }
+        /* .settings-group already defined above */
 
         .settings-group:hover {
             transform: scale(1.05);
@@ -788,10 +770,42 @@
             opacity: 1;
             transform: translateY(0);
         }
+        .subject-container {
+            position: absolute;
+            top: 13vh;
+            z-index: 10;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .subject-container.hidden-title {
+            opacity: 0;
+            transform: translateY(-5vh);
+            pointer-events: none;
+        }
+        #subject-input {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            color: var(--primary-color);
+            font-size: 3vh;
+            font-family: 'Libre Franklin', sans-serif;
+            text-align: center;
+            padding: 5px;
+            width: 30vw;
+            outline: none;
+            transition: border-color 0.3s, width 0.3s;
+        }
+        #subject-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+        #subject-input:focus {
+            border-bottom: 2px solid var(--primary-color);
+            width: 35vw;
+        }
+        
         #subtitle {
             position: absolute;
-            top: 13vh; /* Posizione sotto il titolo */
-            font-size: 3vh;
+            top: 19vh; /* Spostato più in basso per fare spazio all'input */
+            font-size: 2.5vh;
             font-weight: normal;
             color: var(--primary-color); /* Colore coerente con la pagina */
             opacity: 1; /* Il sottotitolo è sempre visibile */
