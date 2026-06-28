@@ -1094,12 +1094,13 @@ function toggleSubtitle() {
 // ========== NOTION-STYLE SUBJECT INPUT ==========
 const savedSubjects = ["Project A", "Math Exam", "Development", "Reading"];
 
-function toggleEmojiPicker() {
-    // Semplice selettore emoji sequenziale (mockup)
-    const emojis = ["📚", "💻", "🧠", "🏋️", "🎨", "📝"];
-    const btn = document.getElementById("subject-icon-btn");
-    let nextIndex = (emojis.indexOf(btn.innerText) + 1) % emojis.length;
-    btn.innerText = emojis[nextIndex];
+function toggleIconPicker() {
+    const icons = ['menu_book', 'computer', 'psychology', 'fitness_center', 'palette', 'edit', 'code', 'language', 'calculate', 'public', 'science', 'gavel'];
+    const btnSpan = document.querySelector('#subject-icon-btn .material-icons');
+    if(btnSpan) {
+        let nextIndex = (icons.indexOf(btnSpan.innerText) + 1) % icons.length;
+        btnSpan.innerText = icons[nextIndex];
+    }
 }
 
 function showSubjectDropdown() {
@@ -1374,3 +1375,4 @@ function updateStatsUI() {
 document.addEventListener("DOMContentLoaded", () => {
     updateStatsUI();
 });
+
