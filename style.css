@@ -19,12 +19,8 @@
             text-align: center;
         }
 
-        h1, h2, h3 {
-            font-family: 'Mozilla Headline', sans-serif;
-        }
-
-        .logo, .title-special {
-            font-family: 'Modak', cursive;
+        input, select, textarea, button {
+            font-family: inherit;
         }
 
         /* Stile del Titolo */
