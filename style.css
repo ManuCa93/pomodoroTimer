@@ -250,9 +250,12 @@
 
         /* Timer piccolo quando il lavoro è in pausa */
         .timer-small {
-            top: 50% !important; /* Messo in centro verticale */
-            width: min(50vw, 180px) !important;
-            height: min(50vw, 180px) !important;
+            left: 80% !important;
+            top: 70% !important;
+            width: min(22vw, 150px) !important;
+            height: min(22vw, 150px) !important;
+            opacity: 1 !important;
+            transform: translate(-50%, -50%) scale(1) !important;
         }
         .timer-small .time {
             font-size: clamp(1.5rem, 7vw, 4rem);
@@ -288,9 +291,12 @@
         }
         /* Torna alla posizione di default dopo la pausa */
         .break-timer-reset {
-            top: 50% !important; /* Messo in centro verticale */
-            width: min(50vw, 180px) !important;
-            height: min(50vw, 180px) !important;
+            left: 80% !important;
+            top: 70% !important;
+            width: min(22vw, 150px) !important;
+            height: min(22vw, 150px) !important;
+            opacity: 1 !important;
+            transform: translate(-50%, -50%) scale(1) !important;
         }
         /* MODERN POP-UP STYLE */
         .popup {
@@ -1986,22 +1992,14 @@
         body.timer-running .timer-container:not(.timer-small), body.panel-collapsed .timer-container:not(.timer-small) {
             left: 50% !important;
         }
-        .timer-small {
-            left: 90% !important;
-            opacity: 0.3 !important;
-            transform: translate(-50%, -50%) scale(0.6) !important;
-        }
+
         body.timer-running .controls-container, body.panel-collapsed .controls-container {
             left: 50% !important;
         }
         body.timer-running .break-timer-large, body.panel-collapsed .break-timer-large {
             left: 50% !important;
         }
-        .break-timer-container:not(.break-timer-large) {
-            left: 90% !important;
-            opacity: 0.3 !important;
-            transform: translate(-50%, -50%) scale(0.6) !important;
-        }
+
         body.timer-running #subtitle, body.panel-collapsed #subtitle {
             left: 50% !important;
         }
