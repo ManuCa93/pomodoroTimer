@@ -86,7 +86,7 @@ function updateBreakCircle() {
     breakCircle.style.strokeDashoffset = breakCircumference - progress;
 }
 
-function switchTimers(isSkip = false) {
+function switchTimers() {
     console.log("🔄 switchTimers() chiamata!");
     const audio = document.getElementById('switch-sound');
     if (audio) {
@@ -143,135 +143,6 @@ function switchTimers(isSkip = false) {
             updateBubbleColors(); // Aggiorna i colori DOPO che onBreak è stato impostato
             //isRunning = true;
 
-            // 6️⃣ Dopo il reset, avvia il timer con partenza fluida
-            setTimeout(() => {
-                startTimer();
-            }, 700);
-        }, 200); // Dopo 200ms passa subito a 25:00 prima di spostarsi
-
-    } else {
-        console.log("☕ Fine Pomodoro, portiamo il timer a 0!");
-        currentPomodoro++;
-        
-        // Record stat with start and end times ONLY if not skipping
-        if (!isSkip) {
-            let sessionEnd = new Date();
-            let sessionStart = currentSessionStart || new Date(sessionEnd.getTime() - workTime * 1000);
-            recordPomodoroStat(workTime, sessionStart, sessionEnd);
-        }
-        
-        // 1️⃣ Porta il timer del lavoro a 0 per un brevissimo istante (200ms)
-        remainingTime = 0;
-        timerDisplay.textContent = "0:00";
-        circle.style.opacity = "0.2"; // 🔥 Opacità al 20% invece di nasconderlo
-        updateCircle();
-        setTimeout(() => {
-            timerDisplay.textContent = `${Math.floor(workTime / 60)}:00`; 
-            }, 600);
-        setTimeout(() => {
-            // 2️⃣ Subito dopo (dopo 200ms) imposta il valore iniziale della prossima pausa
-            let nextBreakTime = (currentPomodoro%totalPomodoros==0) ? longBreakTime : breakTime;
-            remainingTime = nextBreakTime;
-            breakTimerDisplay.textContent = `${Math.floor(nextBreakTime / 60)}:00`;
-
-            // 3️⃣ Ora si sposta e si rimpicciolisce
-            timerContainer.classList.add("timer-small");
-            breakTimerContainer.classList.remove("break-timer-reset");
-            breakTimerContainer.classList.add("break-timer-large");
-
-            setTimeout(() => breakTimerContainer.classList.add("break-timer-active"), 100);
-
-            // 4️⃣ Reset cerchio pausa con animazione più fluida
-            breakCircle.style.opacity = "0.2"; // 🔥 Anche il cerchio pausa parte al 20%
-            setTimeout(() => {
-                updateBreakCircle();
-                breakCircle.style.opacity = "1"; // 🔥 Poi torna a 100% gradualmente
-            }, 500);
-
-            // 5️⃣ Il cerchio lavoro torna gradualmente visibile
-            setTimeout(() => {
-                circle.style.opacity = "1"; // 🔥 Torna visibile con animazione fluida
-            }, 500);
-
-            onBreak = true;
-            updateBubbleColors(); // Aggiorna i colori DOPO che onBreak è stato impostato
-
-            // 6️⃣ Dopo il reset, avvia il timer con partenza fluida
-            setTimeout(() => {
-                startTimer();
-            }, 700);
-        }, 200); // Dopo 200ms passa subito a 5:00 prima di spostarsi
-    }
-    console.log(`🔄 Prossimo timer sarà: ${Math.floor(remainingTime / 60)}:00`);
-    updatePageTitle();
-}
-
-// function startTimer() {
-//     //updatePageTitle();
-//     toggleTitleVisibility();
-//     updateSubtitle();
-//     if (isRunning) return; // Evita di avviare due timer contemporaneamente
-
-//     isRunning = true;
-
-//     toggleBubbleAnimation(true);
-    
-//     interval = setInterval(() => {
-//         if (remainingTime > 0) {
-//             remainingTime--;
-//             let minutes = Math.floor(remainingTime / 60);
-//             let seconds = remainingTime % 60;
-//             updateTimerDisplay();
-//             updatePageTitle();
-            
-//             // Salva i dati di timer in localStorage per il popup
-//             localStorage.setItem('timerData', JSON.stringify({
-//                 remainingTime,
-//                 onBreak,
-//                 isRunning: true,
-//                 currentPomodoro,
-//                 totalPomodoros
-//             }));
-            
-//             if (onBreak) {
-//                 breakTimerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-//                 updateBreakCircle();
-//             } else {
-//                 timerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-//                 updateCircle();
-//             }
-//         } else {
-//             clearInterval(interval);
-//             isRunning = false;
-//             switchTimers();
-//         }
-//     }, 1000);
-//     togglePlayPause();
-// }
-// Variabili globali per il fix throttling (mettile in cima allo script, vicino alle altre)
-let startTimestamp = null;
-let startRemaining = null;
-
-function startTimer() {
-    toggleTitleVisibility();
-    updateSubtitle();
-    if (isRunning) return;
-
-    isRunning = true;
-    toggleBubbleAnimation(true);
-
-    // Salva il punto di partenza nel tempo reale
-    startTimestamp = Date.now();
-    startRemaining = remainingTime;
-    if (!onBreak && remainingTime === workTime) {
-        currentSessionStart = new Date();
-    }
-
-    interval = setInterval(() => {
-        const elapsed = Math.floor((Date.now() - startTimestamp) / 1000);
-        remainingTime = Math.max(0, startRemaining - elapsed);
-
-        if (remainingTime > 0) {
             let minutes = Math.floor(remainingTime / 60);
             let seconds = remainingTime % 60;
 
@@ -432,7 +303,7 @@ function skipTimer() {
         onBreak = false;
         timerDisplay.textContent = `${Math.floor(workTime / 60)}:00`;
         updateCircle();
-        switchTimers(true); // 🔄 Cambia il timer senza avviare il countdown
+        switchTimers(); // 🔄 Cambia il timer senza avviare il countdown
         return;
     }
     
@@ -445,7 +316,9 @@ function skipTimer() {
     console.log("remainingTime:", remainingTime);
     console.log("onBreak:", onBreak);
     
-    switchTimers(true);
+    switchTimers();
+    togglePlayPause();
+    toggleTitleVisibility();
 }
 
 function resetTimer() {
@@ -841,14 +714,11 @@ function switchMenuTab(tabName) {
     event.target.closest(".menu-tab-btn").classList.add("active");
 }
 
-function updateColor(variable, value) {
-    document.documentElement.style.setProperty(variable, value);
-}
-
 document.getElementById('primary-color').addEventListener('input', (e) => {
     document.documentElement.style.setProperty('--primary-color', e.target.value);
     localStorage.setItem('primary-color', e.target.value);
     updateBubbleColors();
+    updateStatsUI();
 });
 
 document.getElementById('background-color').addEventListener('input', (e) => {
@@ -865,6 +735,7 @@ document.getElementById('break-color').addEventListener('input', (e) => {
     document.documentElement.style.setProperty('--break-color', e.target.value);
     localStorage.setItem('break-color', e.target.value);
     updateBubbleColors();
+    updateStatsUI();
 });
 
 function syncColorInputs() {
@@ -1178,8 +1049,100 @@ function initTopic(projectName, topicName) {
 }
 
 function loadTasks() {
-    if (typeof renderTasks === 'function') {
-        renderTasks();
+    const proj = getCurrentProject();
+    const topic = getCurrentTopic();
+    const ul = document.getElementById("todo-list");
+    if(!ul) return;
+    ul.innerHTML = "";
+    if (!proj) return;
+    initTopic(proj, topic);
+    
+    const renderGroup = (tasksArray, groupName, isGeneral) => {
+        if (!tasksArray || tasksArray.length === 0) return;
+        
+        let sortedTasks = tasksArray.map((t, i) => ({...t, originalIndex: i}))
+                               .sort((a, b) => (a.done === b.done) ? 0 : a.done ? 1 : -1);
+                               
+        if (groupName) {
+            const headerLi = document.createElement("li");
+            headerLi.style.cssText = "font-size: 1.4vh; color: rgba(255,255,255,0.6); text-transform: uppercase; margin-top: 1.5vh; margin-bottom: 0.5vh; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 2px;";
+            headerLi.innerText = groupName;
+            ul.appendChild(headerLi);
+        }
+        
+        sortedTasks.forEach((t) => {
+            const i = t.originalIndex;
+            const li = document.createElement("li");
+            li.style.display = "flex"; li.style.alignItems = "center"; li.style.gap = "10px"; li.style.marginBottom = "8px";
+            li.innerHTML = `
+                <label class="custom-checkbox">
+                    <input type="checkbox" onchange="toggleTask(${i}, this.checked, ${isGeneral})" ${t.done ? "checked" : ""}>
+                    <span class="checkmark"></span>
+                </label>
+                <span contenteditable="true" onblur="editTask(${i}, this.innerText, ${isGeneral})" onkeypress="if(event.key==='Enter'){this.blur(); return false;}" style="text-decoration: ${t.done ? 'line-through' : 'none'}; opacity: ${t.done ? '0.5' : '1'}; flex-grow: 1; transition: opacity 0.3s ease; outline: none; cursor: text;">${t.text}</span>
+                
+                <div style="display:flex; flex-direction:column; margin-right: 5px;">
+                    <span class="material-icons" style="font-size:1.5vh; cursor:pointer; color:rgba(255,255,255,0.4); margin-bottom: -5px;" onclick="moveTask(${i}, -1, ${isGeneral})">expand_less</span>
+                    <span class="material-icons" style="font-size:1.5vh; cursor:pointer; color:rgba(255,255,255,0.4);" onclick="moveTask(${i}, 1, ${isGeneral})">expand_more</span>
+                </div>
+                <span class="material-icons" style="font-size:2vh; cursor:pointer; color:rgba(255,255,255,0.3)" onclick="deleteTask(${i}, ${isGeneral})">close</span>
+            `;
+            ul.appendChild(li);
+        });
+    };
+
+    if (topic) {
+        renderGroup(appData.projects[proj].tasks[topic], "Tasks: " + topic, false);
+        renderGroup(appData.projects[proj].tasks[""], "General Tasks: " + proj, true);
+    } else {
+        renderGroup(appData.projects[proj].tasks[""], "", true);
+    }
+}
+
+window.editTask = function(index, newText, isGeneral) {
+    const proj = getCurrentProject(); 
+    const t = isGeneral ? "" : getCurrentTopic();
+    if(appData.projects[proj].tasks[t][index].text !== newText) {
+        appData.projects[proj].tasks[t][index].text = newText;
+        saveAppData(); 
+    }
+};
+
+window.moveTask = function(index, direction, isGeneral) {
+    const proj = getCurrentProject(); const t = isGeneral ? "" : getCurrentTopic();
+    const tasks = appData.projects[proj].tasks[t];
+    if (index + direction >= 0 && index + direction < tasks.length) {
+        const temp = tasks[index];
+        tasks[index] = tasks[index + direction];
+        tasks[index + direction] = temp;
+        saveAppData(); loadTasks();
+    }
+};
+
+window.toggleTask = function(index, isDone, isGeneral) {
+    const proj = getCurrentProject(); const t = isGeneral ? "" : getCurrentTopic();
+    appData.projects[proj].tasks[t][index].done = isDone;
+    saveAppData(); loadTasks();
+};
+
+window.deleteTask = function(index, isGeneral) {
+    const proj = getCurrentProject(); const t = isGeneral ? "" : getCurrentTopic();
+    appData.projects[proj].tasks[t].splice(index, 1);
+    saveAppData(); loadTasks();
+};
+
+function addTodo(event) {
+    if (event.key === "Enter") {
+        const input = document.getElementById("new-todo-input");
+        const val = input.value.trim();
+        const proj = getCurrentProject(); const topic = getCurrentTopic();
+        if (val && proj) {
+            initTopic(proj, topic);
+            appData.projects[proj].tasks[topic].push({ text: val, done: false });
+            saveAppData(); input.value = ""; loadTasks();
+        } else if (!proj) {
+            alert("Please select a project first!");
+        }
     }
 }
 
@@ -1192,13 +1155,13 @@ document.addEventListener("DOMContentLoaded", () => {
             if (val.length > 0) {
                 document.querySelector('.left-section').classList.remove('focus-empty');
                 document.getElementById("subtopic-container").style.display = "flex";
+            document.querySelector('.left-section').classList.remove('focus-empty');
                 document.getElementById("todo-list-container").style.display = "block";
                 loadTasks();
             } else {
                 document.querySelector('.left-section').classList.add('focus-empty');
                 document.getElementById("subtopic-container").style.display = "none";
-                // Don't hide the database when empty project
-                document.getElementById("todo-list-container").style.display = "block";
+                document.getElementById("todo-list-container").style.display = "none";
             }
         });
     }
@@ -1206,10 +1169,10 @@ document.addEventListener("DOMContentLoaded", () => {
         subtopicInput.addEventListener("input", () => loadTasks());
     }
     // Initial load
-    document.getElementById("todo-list-container").style.display = "block";
     if (subjectInput && subjectInput.value.trim().length > 0) {
         document.getElementById("subtopic-container").style.display = "flex";
-        document.querySelector('.left-section').classList.remove('focus-empty');
+            document.querySelector('.left-section').classList.remove('focus-empty');
+        document.getElementById("todo-list-container").style.display = "block";
         loadTasks();
     }
 });
@@ -1281,9 +1244,8 @@ function injectMockStats() {
         let d = new Date(today);
         d.setDate(d.getDate() - i);
         let dateStr = d.toISOString().split('T')[0];
-        
-        // Only inject if it doesn't exist or is missing hourly data
-        if (!appData.statsHistory[dateStr] || appData.statsHistory[dateStr].pomodoros === 0 || !appData.statsHistory[dateStr].hourly || Object.keys(appData.statsHistory[dateStr].hourly).length === 0) {
+        // Only inject if it doesn't exist
+        if (!appData.statsHistory[dateStr] || appData.statsHistory[dateStr].pomodoros === 0) {
             let randomMins = Math.floor(Math.random() * 250) + 50;
             let mockHourly = {};
             let mockSessions = [];
@@ -1293,6 +1255,7 @@ function injectMockStats() {
                 let chunk = Math.min(remaining, Math.floor(Math.random() * 45) + 10);
                 mockHourly[hour] = chunk;
                 
+                // create mock sessions for this chunk
                 let numSessions = Math.ceil(chunk / 25);
                 for(let s = 0; s < numSessions; s++) {
                     let dStart = new Date(d);
@@ -1322,24 +1285,23 @@ function injectMockStats() {
 function initStats() {
     if (!appData.statsHistory) {
         appData.statsHistory = {};
+        // Migrate old stats if they exist
         if (appData.stats && appData.stats.date) {
             let oldDate = new Date(appData.stats.date).toISOString().split('T')[0];
             appData.statsHistory[oldDate] = { 
                 pomodoros: appData.stats.pomodoros || 0, 
                 workMinutes: appData.stats.workMinutes || 0,
-                hourly: {},
-                sessions: []
+                hourly: {}
             };
         }
     }
     
     const today = new Date().toISOString().split('T')[0];
     if (!appData.statsHistory[today]) {
-        appData.statsHistory[today] = { pomodoros: 0, workMinutes: 0, hourly: {}, sessions: [] };
+        appData.statsHistory[today] = { pomodoros: 0, workMinutes: 0, hourly: {} };
         saveAppData();
-    } else {
-        if (!appData.statsHistory[today].hourly) appData.statsHistory[today].hourly = {};
-        if (!appData.statsHistory[today].sessions) appData.statsHistory[today].sessions = [];
+    } else if (!appData.statsHistory[today].hourly) {
+        appData.statsHistory[today].hourly = {};
         saveAppData();
     }
 }
@@ -1382,13 +1344,14 @@ function updateStatsUI() {
     
     if (filter === "today") {
         let todayStr = new Date().toISOString().split('T')[0];
-        let todayStats = appData.statsHistory[todayStr] || { hourly: {}, workMinutes: 0, pomodoros: 0, sessions: [] };
+        let todayStats = appData.statsHistory[todayStr] || { hourly: {}, workMinutes: 0, pomodoros: 0 };
         totalPomos = todayStats.pomodoros || 0;
         totalMins = todayStats.workMinutes || 0;
         
         let hourlyData = todayStats.hourly || {};
-        for(let h = 0; h <= 23; h++) {
-            chartLabels.push(h.toString().padStart(2, '0') + ":00");
+        // Mostra le ore dalle 8:00 alle 22:00 per avere un bel grafico
+        for(let h = 8; h <= 22; h++) {
+            chartLabels.push(h + ":00");
             chartData.push(hourlyData[h] || 0);
         }
     } else if (filter !== "lifetime") {
@@ -1407,8 +1370,7 @@ function updateStatsUI() {
             
             totalPomos += pomos;
             totalMins += mins;
-            let label = filter === "7days" ? d.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' }) : d.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
-            chartLabels.push(label);
+            chartLabels.push(d.toLocaleDateString('en-US', { weekday: 'short' }));
             chartData.push(mins);
         }
     } else {
@@ -1424,6 +1386,7 @@ function updateStatsUI() {
         });
     }
 
+    // Update text
     const statWork = document.getElementById("stat-work");
     const statPomos = document.getElementById("stat-pomos");
     if(statWork && statPomos) {
@@ -1433,6 +1396,7 @@ function updateStatsUI() {
         statPomos.textContent = totalPomos;
     }
     
+    // Draw chart
     drawStatsChart(chartLabels, chartData);
 }
 
@@ -1486,183 +1450,9 @@ function drawStatsChart(labels, data) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    // Inject mock data so the chart is populated for testing
     injectMockStats();
     updateStatsUI();
 });
 
-// ====== NOTION TASKS LOGIC ======
-let currentSortCol = 'priority';
-let sortAscending = false;
 
-function initTasks() {
-    if (!appData.tasks) {
-        appData.tasks = [];
-        saveAppData();
-    }
-}
-
-function renderTasks() {
-    initTasks();
-    const body = document.getElementById("notion-tasks-body");
-    if (!body) return;
-    
-    // Sort and Filter tasks
-    let projFilter = (typeof getCurrentProject === 'function' ? getCurrentProject() : '').toLowerCase();
-    let topicFilter = (typeof getCurrentTopic === 'function' ? getCurrentTopic() : '').toLowerCase();
-    
-    let sortedTasks = appData.tasks.filter(t => {
-        if (projFilter && (!t.macroSubject || t.macroSubject.toLowerCase() !== projFilter)) return false;
-        if (topicFilter && (!t.subject || t.subject.toLowerCase() !== topicFilter)) return false;
-        return true;
-    });
-    sortedTasks.sort((a, b) => {
-        let valA = a[currentSortCol] || '';
-        let valB = b[currentSortCol] || '';
-        
-        if (currentSortCol === 'priority') {
-            const levels = { 'High': 3, 'Medium': 2, 'Low': 1, '': 0 };
-            valA = levels[valA];
-            valB = levels[valB];
-        } else if (currentSortCol === 'name') {
-            valA = valA.toLowerCase();
-            valB = valB.toLowerCase();
-        }
-        
-        if (valA < valB) return sortAscending ? -1 : 1;
-        if (valA > valB) return sortAscending ? 1 : -1;
-        return 0;
-    });
-
-    body.innerHTML = "";
-    sortedTasks.forEach((task, idx) => {
-        const row = document.createElement("div");
-        row.className = "notion-row";
-        
-        // Priority Tag
-        let pClass = task.priority ? `notion-tag tag-priority-${task.priority}` : `notion-tag tag-empty`;
-        let pText = task.priority || "Empty";
-        
-        // Subject Tag
-        let sClass = task.subject ? `notion-tag tag-subject` : `notion-tag tag-empty`;
-        let sText = task.subject || "Empty";
-        
-        // Macro Tag
-        let mClass = task.macroSubject ? `notion-tag tag-macro` : `notion-tag tag-empty`;
-        let mText = task.macroSubject || "Empty";
-        
-        row.innerHTML = `
-            <div class="notion-cell notion-col-checkbox">
-                <label class="custom-checkbox">
-                    <input type="checkbox" onchange="toggleTaskCompletion('${task.id}')" ${task.completed ? 'checked' : ''}>
-                    <span class="checkmark"></span>
-                </label>
-            </div>
-            <div class="notion-cell notion-col-name">
-                <input type="text" class="task-input" style="${task.completed ? 'text-decoration: line-through; opacity: 0.5;' : ''}" value="${task.name}" onchange="updateTask('${task.id}', 'name', this.value)">
-            </div>
-            <div class="notion-cell notion-col-macro">
-                <span class="${mClass}">${mText}</span>
-            </div>
-            <div class="notion-cell notion-col-subject">
-                <span class="${sClass}">${sText}</span>
-            </div>
-            <div class="notion-cell notion-col-priority">
-                <span class="${pClass}" onclick="cyclePriority('${task.id}')">${pText}</span>
-            </div>
-            <div class="notion-cell notion-col-date">
-                <input type="date" class="task-input" style="color: rgba(255,255,255,0.6); padding: 0;" value="${task.startDate || ''}" onchange="updateTask('${task.id}', 'startDate', this.value)">
-            </div>
-            <div class="notion-cell notion-col-date">
-                <input type="date" class="task-input" style="color: rgba(255,255,255,0.6); padding: 0;" value="${task.endDate || ''}" onchange="updateTask('${task.id}', 'endDate', this.value)">
-            </div>
-        `;
-        body.appendChild(row);
-    });
-}
-
-function addNewTask() {
-    initTasks();
-    const proj = (typeof getCurrentProject === 'function' ? getCurrentProject() : '') || '';
-    const topic = (typeof getCurrentTopic === 'function' ? getCurrentTopic() : '') || '';
-    
-    const newTask = {
-        id: 'task_' + Date.now(),
-        name: '',
-        macroSubject: proj,
-        subject: topic,
-        priority: 'Low',
-        startDate: new Date().toISOString().split('T')[0],
-        endDate: '',
-        completed: false
-    };
-    appData.tasks.push(newTask);
-    saveAppData();
-    renderTasks();
-    
-    // Focus new input
-    setTimeout(() => {
-        const inputs = document.querySelectorAll('.notion-col-name input');
-        if (inputs.length > 0) inputs[inputs.length - 1].focus();
-    }, 50);
-}
-
-function updateTask(id, field, value) {
-    const task = appData.tasks.find(t => t.id === id);
-    if (task) {
-        task[field] = value;
-        saveAppData();
-        if (field === 'completed' || currentSortCol === field) {
-            renderTasks();
-        }
-    }
-}
-
-function toggleTaskCompletion(id) {
-    const task = appData.tasks.find(t => t.id === id);
-    if (task) {
-        task.completed = !task.completed;
-        saveAppData();
-        renderTasks();
-    }
-}
-
-function cyclePriority(id) {
-    const task = appData.tasks.find(t => t.id === id);
-    if (task) {
-        const levels = ['Low', 'Medium', 'High', ''];
-        let idx = levels.indexOf(task.priority);
-        task.priority = levels[(idx + 1) % levels.length];
-        saveAppData();
-        renderTasks();
-    }
-}
-
-function editTaskTag(id, field) {
-    const task = appData.tasks.find(t => t.id === id);
-    if (task) {
-        let val = prompt(`Enter ${field}:`, task[field] || "");
-        if (val !== null) {
-            task[field] = val.trim();
-            saveAppData();
-            renderTasks();
-        }
-    }
-}
-
-function sortTasks(col) {
-    if (currentSortCol === col) {
-        sortAscending = !sortAscending;
-    } else {
-        currentSortCol = col;
-        sortAscending = true;
-    }
-    renderTasks();
-}
-
-function openFullDatabase() {
-    alert("Full Database Modal UI coming soon! For now, scroll horizontally.");
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-    renderTasks();
-});

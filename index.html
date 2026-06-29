@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,100..900;1,100..900&family=Modak&family=Mozilla+Headline:wght@200..700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
 <body>
@@ -82,52 +83,77 @@
         <!-- Quick Stats -->
         <div class="left-section">
             <h3 class="panel-title" style="display: flex; justify-content: space-between; align-items: center;">
-                Recent Stats
-                <span class="material-icons" style="font-size: 2vh; cursor: pointer; color: rgba(255,255,255,0.5);" onclick="document.body.classList.toggle('panel-collapsed')">keyboard_double_arrow_left</span>
+                Stats
+                <button class="close-panel-btn" onclick="document.body.classList.toggle('panel-collapsed')">
+                    <span class="material-icons">keyboard_double_arrow_left</span>
+                </button>
             </h3>
-            <div id="stats-content" class="stats-content">
-                <p>Today: <span class="stat-value">--</span></p>
-                <p>Pomodoros: <span class="stat-value">0</span></p>
+            <div id="stats-controls" class="stats-segmented-control" style="display: flex; justify-content: center; gap: 0.5vw; margin-bottom: 1.5vh; width: 100%;">
+                <button class="stats-tab active" data-filter="today" onclick="setStatsFilter('today')">1D</button>
+                <button class="stats-tab" data-filter="7days" onclick="setStatsFilter('7days')">7D</button>
+                <button class="stats-tab" data-filter="1month" onclick="setStatsFilter('1month')">30D</button>
+                <button class="stats-tab" data-filter="lifetime" onclick="setStatsFilter('lifetime')">All</button>
+            </div>
+            <div id="stats-content" class="stats-content" style="display: flex; justify-content: space-between; width: 100%; box-sizing: border-box; margin: 0 auto 1.5vh auto; font-size: 1.6vh;">
+                <div style="display: flex; flex-direction: column; align-items: center; background: rgba(0,0,0,0.3); padding: 1vh 2vw; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">
+                    <span style="color: rgba(255,255,255,0.6); font-size: 1.2vh; text-transform: uppercase;">Work</span>
+                    <span class="stat-value" id="stat-work" style="font-size: 2vh; margin-top: 0.2vh;">--</span>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center; background: rgba(0,0,0,0.3); padding: 1vh 2vw; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">
+                    <span style="color: rgba(255,255,255,0.6); font-size: 1.2vh; text-transform: uppercase;">Pomos</span>
+                    <span class="stat-value" id="stat-pomos" style="font-size: 2vh; margin-top: 0.2vh;">0</span>
+                </div>
+            </div>
+            <div id="stats-chart-container" style="width: 100%; height: 15vh; position: relative;">
+                <canvas id="stats-chart"></canvas>
             </div>
         </div>
 
         <!-- Working On (Subject + Subtopic + Todo) -->
         <div class="left-section focus-empty">
             <h3 class="panel-title">Current Focus</h3>
-            <div class="subject-container" id="subject-container" style="position: relative; width: 100%; display: flex; align-items: center; gap: 1vw;">
-                <button id="subject-icon-btn" onclick="toggleIconPicker()" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; font-size: 2.5vh; cursor: pointer; padding: 1vh 1vw; backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center;">
-                    <span class="material-icons" style="font-size: 3vh;">menu_book</span>
+            <div class="unified-task-block" style="width: 100%; margin: 0 auto; box-sizing: border-box; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 1vh 1vw; display: flex; flex-direction: column; gap: 1vh;">
+                <div class="subject-container" id="subject-container" style="background: transparent; border: none; padding: 0; width: 100%;">
+                <button id="subject-icon-btn" onclick="toggleIconPicker()">
+                    <span class="material-icons">menu_book</span>
                 </button>
                 <div style="position: relative; display: flex; flex-direction: column; flex: 1; min-width: 0;">
-                    <input type="text" id="subject-input" placeholder="Project / Subject..." maxlength="40" autocomplete="off" onfocus="showSubjectDropdown()" oninput="filterSubjectDropdown()" style="width: 100%; box-sizing: border-box; text-align: left; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); padding: 0.5vh 1vw; border-radius: 10px; color: white;">
-                    <div id="subject-dropdown" class="subject-dropdown" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; z-index: 1000; background: rgba(20,20,20,0.95); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; margin-top: 5px; max-height: 20vh; overflow-y: auto; backdrop-filter: blur(15px);"></div>
+                    <input type="text" id="subject-input" placeholder="Macro-subject..." maxlength="40" autocomplete="off" onfocus="showSubjectDropdown()" oninput="filterSubjectDropdown()">
+                    <div id="subject-dropdown" class="subject-dropdown" style="display: none;"></div>
                 </div>
             </div>
             
-            <div class="subtopic-container" id="subtopic-container" style="display: none; position: relative; top: auto; margin-top: 1vh; width: 100%; align-items: flex-start; justify-content: flex-start; padding: 0; border: none; background: transparent;">
-                <span class="material-icons" style="color: rgba(255,255,255,0.5); font-size: 2vh; margin-right: 0.5vw; margin-top: 0.5vh;">subdirectory_arrow_right</span>
+            <div class="subtopic-container" id="subtopic-container" style="display: none; background: transparent; border: none; padding: 0; width: 100%;">
+                <span class="material-icons" style="color: rgba(255,255,255,0.5); font-size: 2vh; margin-right: 0.5vw;">subdirectory_arrow_right</span>
                 <div style="position: relative; display: flex; flex-direction: column; flex: 1; min-width: 0;">
-                    <input type="text" id="subtopic-input" placeholder="Specific topic (optional)" maxlength="60" autocomplete="off" onfocus="showSubtopicDropdown()" oninput="filterSubtopicDropdown()" style="width: 100%; box-sizing: border-box; background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); font-size: 1.8vh; font-family: 'Libre Franklin', sans-serif; outline: none; padding-bottom: 0.2vh;">
-                    <div id="subtopic-dropdown" class="subject-dropdown" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; z-index: 1000; background: rgba(20,20,20,0.95); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; margin-top: 5px; max-height: 20vh; overflow-y: auto; backdrop-filter: blur(15px);"></div>
+                    <input type="text" id="subtopic-input" placeholder="Specific topic (optional)" maxlength="60" autocomplete="off" onfocus="showSubtopicDropdown()" oninput="filterSubtopicDropdown()">
+                    <div id="subtopic-dropdown" class="subject-dropdown" style="display: none;"></div>
                 </div>
             </div>
 
-            <!-- To-Do List -->
-            <div class="todo-list-container" id="todo-list-container" style="display: none; margin-top: 2vh; width: 100%;">
-                <ul id="todo-list" style="list-style: none; padding: 0; text-align: left; color: white; font-size: 1.8vh;">
-                    <li style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-                        <label class="custom-checkbox">
-                            <input type="checkbox">
-                            <span class="checkmark"></span>
-                        </label>
-                        <span>Example Task</span>
-                    </li>
-                </ul>
-                <div style="display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.2); margin-top: 1vh;">
-                    <span class="material-icons" style="color: rgba(255,255,255,0.5); font-size: 1.8vh; margin-right: 5px;">add</span>
-                    <input type="text" id="new-todo-input" placeholder="Add a task..." style="background: transparent; box-sizing: border-box; border: none; color: white; outline: none; font-family: 'Libre Franklin', sans-serif; font-size: 1.8vh; width: 100%;" onkeypress="addTodo(event)">
+            <!-- To-Do List (Notion Database) -->
+            <div class="notion-db-container" id="todo-list-container" style="display: none; padding-top: 1vh; background: transparent; border: none; margin-top: 0; border-top: 1px solid rgba(255,255,255,0.1); border-radius: 0;">
+                <div class="notion-table-wrapper">
+                    <div class="notion-table">
+                        <div class="notion-row notion-header-row">
+                            <div class="notion-cell notion-col-checkbox"></div>
+                            <div class="notion-cell notion-col-name" onclick="sortTasks('name')">Task Name <span class="sort-icon material-icons">unfold_more</span></div>
+                            <div class="notion-cell notion-col-macro">Macro-Subject</div>
+                            <div class="notion-cell notion-col-subject">Subject</div>
+                            <div class="notion-cell notion-col-priority" onclick="sortTasks('priority')">Priority <span class="sort-icon material-icons">unfold_more</span></div>
+                            <div class="notion-cell notion-col-date">Start</div>
+                            <div class="notion-cell notion-col-date">End</div>
+                        </div>
+                        <div id="notion-tasks-body">
+                            <!-- Tasks will be injected here -->
+                        </div>
+                        <div class="notion-row notion-add-row" onclick="addNewTask()">
+                            <span class="material-icons" style="font-size: 1.6vh; margin-right: 5px;">add</span> New Task
+                        </div>
+                    </div>
                 </div>
             </div>
+            </div> <!-- End unified-task-block -->
         </div>
 
         <!-- Fullscreen Analytics Button -->
