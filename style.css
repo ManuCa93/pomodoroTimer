@@ -126,6 +126,7 @@
 */
         /* Timer principale */
         .timer-container {
+            z-index: 1;
             position: absolute;
             top: 50%;
             left: 68%;
@@ -140,9 +141,10 @@
 
         /* Timer pausa */
         .break-timer-container {
+            z-index: 10;
             position: absolute;
             top: 70%; /* Più in basso */
-            left: 80%; /* Posizione iniziale a destra */
+            left: 85%; /* Posizione iniziale a destra */
             transform: translate(-50%, -50%);
             display: flex;
             justify-content: center;
@@ -250,12 +252,13 @@
 
         /* Timer piccolo quando il lavoro è in pausa */
         .timer-small {
-            left: 80% !important;
+            z-index: 10 !important;
+            left: 85% !important;
             top: 70% !important;
             width: min(22vw, 150px) !important;
             height: min(22vw, 150px) !important;
             opacity: 1 !important;
-            transform: translate(-50%, -50%) scale(1) !important;
+            transform: translate(-50%, -50%) !important;
         }
         .timer-small .time {
             font-size: clamp(1.5rem, 7vw, 4rem);
@@ -267,14 +270,15 @@
         }
         /* Timer della pausa - diventa grande al centro */
         .break-timer-large {
+            z-index: 1 !important;
             left: 68% !important;
             top: 50% !important;
-            width: min(120vw, 700px);
-            height: min(120vw, 700px);
+            width: min(100vw, 500px) !important;
+            height: min(100vw, 500px) !important;
             transform: translate(-50%, -50%);
         }
         .break-timer-large .time {
-            font-size: clamp(4rem, 20vw, 8rem);
+            font-size: clamp(4.2rem, 21vw, 8.4rem) !important;
             color: var(--break-color) !important;
         }
         /* Nasconde il cerchio del timer piccolo inizialmente */
@@ -291,12 +295,13 @@
         }
         /* Torna alla posizione di default dopo la pausa */
         .break-timer-reset {
-            left: 80% !important;
+            z-index: 10 !important;
+            left: 85% !important;
             top: 70% !important;
             width: min(22vw, 150px) !important;
             height: min(22vw, 150px) !important;
             opacity: 1 !important;
-            transform: translate(-50%, -50%) scale(1) !important;
+            transform: translate(-50%, -50%) !important;
         }
         /* MODERN POP-UP STYLE */
         .popup {
@@ -1230,7 +1235,7 @@
             border-radius: 2vmax;
             padding: 3vh 4vw;
             width: 90%;
-            max-width: 650px;
+            max-width: 500px;
             max-height: 80vh;
             overflow-y: auto;
             overflow-x: hidden;
@@ -2000,6 +2005,13 @@
             left: 50% !important;
         }
 
+        /* Movimento del timer piccolo per mantenere la stessa distanza dal centro */
+        body.timer-running .timer-small, body.panel-collapsed .timer-small,
+        body.timer-running .break-timer-reset, body.panel-collapsed .break-timer-reset,
+        body.timer-running .break-timer-container:not(.break-timer-large), body.panel-collapsed .break-timer-container:not(.break-timer-large) {
+            left: 67% !important;
+        }
+
         body.timer-running #subtitle, body.panel-collapsed #subtitle {
             left: 50% !important;
         }
@@ -2077,7 +2089,7 @@
 
 /* Smooth global transitions for timers and controls */
 .timer-container, .break-timer-container, .controls-container, #subtitle {
-    transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s ease-in-out;
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 
@@ -2087,18 +2099,32 @@
     overflow-x: hidden !important;
 }
 
-/* Custom minimal scrollbar for the left panel */
-.left-panel::-webkit-scrollbar {
-    width: 6px;
+#analytics-button {
+    position: sticky !important;
+    bottom: 0 !important;
+    align-self: flex-end;
+    margin-top: auto;
+    z-index: 100;
 }
-.left-panel::-webkit-scrollbar-track {
+
+/* Global Custom Minimal Scrollbar */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
     background: transparent;
 }
-.left-panel::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.2);
     border-radius: 10px;
 }
-.left-panel::-webkit-scrollbar-thumb:hover {
+::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.4);
 }
 
@@ -2154,8 +2180,8 @@
 }
 /* hide scrollbar but keep functionality */
 .notion-table-wrapper::-webkit-scrollbar { height: 6px; }
-.notion-table-wrapper::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 3px; }
-.notion-table-wrapper::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+.notion-table-wrapper::-webkit-scrollbar-track { background: transparent; }
+.notion-table-wrapper::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
 
 .notion-table {
     display: flex;

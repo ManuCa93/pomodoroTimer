@@ -106,6 +106,9 @@
             </div>
             <div id="stats-chart-container" style="width: 100%; height: 15vh; position: relative;">
                 <canvas id="stats-chart"></canvas>
+                <button id="analytics-button" class="analytics-btn-inline" onclick="alert('Analytics Dashboard coming soon!')" style="position: absolute; bottom: -0.5vh; right: -0.5vw; padding: 1vh; border-radius: 50%; background: transparent; border: none; width: auto; z-index: 10; cursor: pointer;">
+                    <span class="material-icons" style="font-size: 3vh; color: rgba(255,255,255,0.7);">bar_chart</span>
+                </button>
             </div>
         </div>
 
@@ -113,20 +116,23 @@
         <div class="left-section focus-empty">
             <h3 class="panel-title">Current Focus</h3>
             <div class="unified-task-block" style="width: 100%; margin: 0 auto; box-sizing: border-box; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 1vh 1vw; display: flex; flex-direction: column; gap: 1vh;">
-                <div class="subject-container" id="subject-container" style="background: transparent; border: none; padding: 0; width: 100%;">
+                <div class="subject-container" id="subject-container" style="position: relative; z-index: 50; background: transparent; border: none; padding: 0; width: 100%;">
                 <button id="subject-icon-btn" onclick="toggleIconPicker()">
                     <span class="material-icons">menu_book</span>
                 </button>
-                <div style="position: relative; display: flex; flex-direction: column; flex: 1; min-width: 0;">
-                    <input type="text" id="subject-input" placeholder="Macro-subject..." maxlength="40" autocomplete="off" onfocus="showSubjectDropdown()" oninput="filterSubjectDropdown()">
+                <div style="position: relative; display: flex; flex-direction: column; flex: 1; min-width: 0; z-index: 50;">
+                    <input type="text" id="subject-input" placeholder="Macro-subject..." maxlength="40" autocomplete="off" onfocus="showSubjectDropdown()" oninput="filterSubjectDropdown()" onkeydown="handleDropdownKeydown(event, 'subject-input', 'subject-dropdown')">
                     <div id="subject-dropdown" class="subject-dropdown" style="display: none;"></div>
                 </div>
+                <button id="clear-focus-btn" class="notion-btn" onclick="clearFocus()" style="margin-left: 0.5vw; padding: 0.5vh; display: none;" title="Clear Focus / Home">
+                    <span class="material-icons" style="font-size: 2.2vh;">home</span>
+                </button>
             </div>
             
-            <div class="subtopic-container" id="subtopic-container" style="display: none; background: transparent; border: none; padding: 0; width: 100%;">
+            <div class="subtopic-container" id="subtopic-container" style="display: none; position: relative; z-index: 40; background: transparent; border: none; padding: 0; width: 100%;">
                 <span class="material-icons" style="color: rgba(255,255,255,0.5); font-size: 2vh; margin-right: 0.5vw;">subdirectory_arrow_right</span>
-                <div style="position: relative; display: flex; flex-direction: column; flex: 1; min-width: 0;">
-                    <input type="text" id="subtopic-input" placeholder="Specific topic (optional)" maxlength="60" autocomplete="off" onfocus="showSubtopicDropdown()" oninput="filterSubtopicDropdown()">
+                <div style="position: relative; display: flex; flex-direction: column; flex: 1; min-width: 0; z-index: 40;">
+                    <input type="text" id="subtopic-input" placeholder="Specific topic (optional)" maxlength="60" autocomplete="off" onfocus="showSubtopicDropdown()" oninput="filterSubtopicDropdown()" onkeydown="handleDropdownKeydown(event, 'subtopic-input', 'subtopic-dropdown')">
                     <div id="subtopic-dropdown" class="subject-dropdown" style="display: none;"></div>
                 </div>
             </div>
@@ -143,6 +149,7 @@
                             <div class="notion-cell notion-col-priority" onclick="sortTasks('priority')">Priority <span class="sort-icon material-icons">unfold_more</span></div>
                             <div class="notion-cell notion-col-date">Start</div>
                             <div class="notion-cell notion-col-date">End</div>
+                            <div class="notion-cell notion-col-delete" style="width: 3vw;"></div>
                         </div>
                         <div id="notion-tasks-body">
                             <!-- Tasks will be injected here -->
@@ -156,10 +163,6 @@
             </div> <!-- End unified-task-block -->
         </div>
 
-        <!-- Fullscreen Analytics Button -->
-        <button id="analytics-button" class="analytics-btn-inline" onclick="alert('Analytics Dashboard coming soon!')" style="position: absolute; bottom: 2vw; right: 2vw; padding: 1vh; border-radius: 50%; background: transparent; border: none; width: auto;">
-            <span class="material-icons" style="font-size: 3vh;">bar_chart</span>
-        </button>
     </div>
     <!--<div class="controls" id="controls">
         <label for="duration">Set Timer (minutes):</label>
@@ -441,6 +444,9 @@
             <p id="edit-save-message" style="display: none; color: limegreen; font-size: 1.5rem; font-weight: bold;">Values Saved</p>
         </div>
     </div>
+    <!-- Global DB Select Dropdown -->
+    <div id="global-db-dropdown" class="subject-dropdown" style="display: none; position: fixed; z-index: 999999; width: auto; min-width: 15vw; max-height: 30vh;"></div>
+
     <script src="script.js"></script>
 </body>
 </html>

@@ -95,6 +95,13 @@ function switchTimers(isSkip = false) {
 
     clearInterval(interval); // Ferma il timer attuale
     isRunning = false;
+    
+    if (actualSessionStart) {
+        let now = new Date();
+        let isFullPomo = (!onBreak && !isSkip);
+        recordSessionTime(actualSessionStart, now, isFullPomo);
+        actualSessionStart = null;
+    }
 
     if (onBreak) {
         console.log("⏳ Fine pausa, portiamo il timer a 0!");
@@ -152,13 +159,6 @@ function switchTimers(isSkip = false) {
     } else {
         console.log("☕ Fine Pomodoro, portiamo il timer a 0!");
         currentPomodoro++;
-        
-        // Record stat with start and end times ONLY if not skipping
-        if (!isSkip) {
-            let sessionEnd = new Date();
-            let sessionStart = currentSessionStart || new Date(sessionEnd.getTime() - workTime * 1000);
-            recordPomodoroStat(workTime, sessionStart, sessionEnd);
-        }
         
         // 1️⃣ Porta il timer del lavoro a 0 per un brevissimo istante (200ms)
         remainingTime = 0;
@@ -248,9 +248,10 @@ function switchTimers(isSkip = false) {
 //     }, 1000);
 //     togglePlayPause();
 // }
-// Variabili globali per il fix throttling (mettile in cima allo script, vicino alle altre)
+// Variabili globali per il fix throttling
 let startTimestamp = null;
 let startRemaining = null;
+let actualSessionStart = null;
 
 function startTimer() {
     toggleTitleVisibility();
@@ -263,6 +264,10 @@ function startTimer() {
     // Salva il punto di partenza nel tempo reale
     startTimestamp = Date.now();
     startRemaining = remainingTime;
+    
+    if (!actualSessionStart) {
+        actualSessionStart = new Date();
+    }
     if (!onBreak && remainingTime === workTime) {
         currentSessionStart = new Date();
     }
@@ -368,6 +373,12 @@ function toggleTimer() {
         localStorage.setItem('timerData', JSON.stringify({
             remainingTime, onBreak, isRunning: false, currentPomodoro, totalPomodoros
         }));
+        
+        // REC STATS
+        if (actualSessionStart) {
+            recordSessionTime(actualSessionStart, new Date(), false);
+            actualSessionStart = null;
+        }
         toggleBubbleAnimation(false);
         if(title) {
             title.classList.add("visible-title");
@@ -449,6 +460,11 @@ function skipTimer() {
 }
 
 function resetTimer() {
+    if (actualSessionStart) {
+        recordSessionTime(actualSessionStart, new Date(), false);
+        actualSessionStart = null;
+    }
+    
     clearInterval(interval);
     isRunning = false;
     currentPomodoro = 0;
@@ -1111,6 +1127,61 @@ function toggleIconPicker() {
     }
 }
 
+function clearFocus() {
+    document.getElementById("subject-input").value = "";
+    document.getElementById("subtopic-input").value = "";
+    document.getElementById("subject-input").dispatchEvent(new Event('input'));
+    document.getElementById("subtopic-input").dispatchEvent(new Event('input'));
+    
+    // Hide subtopic container explicitly
+    document.getElementById("subtopic-container").style.display = "none";
+    document.querySelector('.left-section').classList.add('focus-empty');
+    
+    const clearBtn = document.getElementById("clear-focus-btn");
+    if (clearBtn) clearBtn.style.display = "none";
+    
+    renderTasks();
+}
+
+let currentDropdownIndex = -1;
+
+function handleDropdownKeydown(e, inputId, dropdownId) {
+    const dropdown = document.getElementById(dropdownId);
+    if (!dropdown || dropdown.style.display === "none") return;
+    
+    const items = dropdown.querySelectorAll('.subject-dropdown-item');
+    if (items.length === 0) return;
+
+    if (e.key === "ArrowDown") {
+        e.preventDefault();
+        currentDropdownIndex++;
+        if (currentDropdownIndex >= items.length) currentDropdownIndex = 0;
+        highlightDropdownItem(items, currentDropdownIndex);
+    } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        currentDropdownIndex--;
+        if (currentDropdownIndex < 0) currentDropdownIndex = items.length - 1;
+        highlightDropdownItem(items, currentDropdownIndex);
+    } else if (e.key === "Enter") {
+        e.preventDefault();
+        if (currentDropdownIndex >= 0 && currentDropdownIndex < items.length) {
+            items[currentDropdownIndex].click();
+        } else {
+            items[0].click(); // Seleziona il primo se nessuno è evidenziato
+        }
+    }
+}
+
+function highlightDropdownItem(items, index) {
+    items.forEach((item, i) => {
+        if (i === index) {
+            item.style.background = "rgba(255,255,255,0.2)";
+        } else {
+            item.style.background = "transparent";
+        }
+    });
+}
+
 function showSubjectDropdown() {
     const dropdown = document.getElementById("subject-dropdown");
     if(dropdown) {
@@ -1120,12 +1191,19 @@ function showSubjectDropdown() {
 }
 
 function filterSubjectDropdown() {
+    currentDropdownIndex = -1;
     const input = document.getElementById("subject-input").value.toLowerCase();
     const dropdown = document.getElementById("subject-dropdown");
     if(!dropdown) return;
     
     dropdown.innerHTML = "";
-    let matches = savedSubjects.filter(s => s.toLowerCase().includes(input));
+    
+    // Get all unique macros from appData
+    let fromProjects = Object.keys(appData.projects);
+    let fromTasks = appData.tasks ? appData.tasks.map(t => t.macroSubject).filter(Boolean) : [];
+    let allSubjects = [...new Set([...savedSubjects, ...fromProjects, ...fromTasks])];
+    
+    let matches = allSubjects.filter(s => s.toLowerCase().includes(input));
     
     if (matches.length === 0 && input.trim() !== "") {
         matches = [`Create new: "${input}"`];
@@ -1143,6 +1221,12 @@ function filterSubjectDropdown() {
             document.getElementById("subtopic-container").style.display = "flex";
             document.querySelector('.left-section').classList.remove('focus-empty');
             document.getElementById("todo-list-container").style.display = "block";
+            
+            const clearBtn = document.getElementById("clear-focus-btn");
+            if (clearBtn) clearBtn.style.display = "flex";
+            
+            if (typeof initTopic === "function") initTopic(selected, "");
+            
             if (!savedSubjects.includes(selected)) {
                 savedSubjects.push(selected);
             }
@@ -1193,10 +1277,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.querySelector('.left-section').classList.remove('focus-empty');
                 document.getElementById("subtopic-container").style.display = "flex";
                 document.getElementById("todo-list-container").style.display = "block";
+                const clearBtn = document.getElementById("clear-focus-btn");
+                if (clearBtn) clearBtn.style.display = "flex";
                 loadTasks();
             } else {
                 document.querySelector('.left-section').classList.add('focus-empty');
                 document.getElementById("subtopic-container").style.display = "none";
+                const clearBtn = document.getElementById("clear-focus-btn");
+                if (clearBtn) clearBtn.style.display = "none";
                 // Don't hide the database when empty project
                 document.getElementById("todo-list-container").style.display = "block";
             }
@@ -1210,6 +1298,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (subjectInput && subjectInput.value.trim().length > 0) {
         document.getElementById("subtopic-container").style.display = "flex";
         document.querySelector('.left-section').classList.remove('focus-empty');
+        const clearBtn = document.getElementById("clear-focus-btn");
+        if (clearBtn) clearBtn.style.display = "flex";
         loadTasks();
     }
 });
@@ -1220,6 +1310,7 @@ function showSubtopicDropdown() {
 }
 
 function filterSubtopicDropdown() {
+    currentDropdownIndex = -1;
     const proj = getCurrentProject();
     const input = getCurrentTopic();
     const dropdown = document.getElementById("subtopic-dropdown");
@@ -1227,7 +1318,11 @@ function filterSubtopicDropdown() {
     if(!proj) return;
     
     let subtopics = (appData.projects[proj] && appData.projects[proj].subtopics) ? appData.projects[proj].subtopics : [];
-    let matches = subtopics.filter(s => s.toLowerCase().includes(input.toLowerCase()));
+    // Also include any subjects from tasks for this macro
+    let fromTasks = appData.tasks ? appData.tasks.filter(t => t.macroSubject === proj).map(t => t.subject).filter(Boolean) : [];
+    let allSubtopics = [...new Set([...subtopics, ...fromTasks])];
+    
+    let matches = allSubtopics.filter(s => s.toLowerCase().includes(input.toLowerCase()));
     if (matches.length === 0 && input.trim() !== "") {
         matches = [`Create new: "${input}"`];
     }
@@ -1240,6 +1335,7 @@ function filterSubtopicDropdown() {
             let selected = match.replace("Create new: \"", "").replace("\"", "");
             document.getElementById("subtopic-input").value = selected;
             dropdown.style.display = "none";
+            if (typeof initTopic === "function") initTopic(proj, selected);
             loadTasks();
         };
         dropdown.appendChild(div);
@@ -1344,24 +1440,55 @@ function initStats() {
     }
 }
 
-function recordPomodoroStat(seconds, startObj, endObj) {
+function recordSessionTime(startObj, endObj, isFullPomo) {
+    if (!startObj || !endObj) return;
     initStats();
-    const todayDate = new Date();
-    const today = todayDate.toISOString().split('T')[0];
-    const currentHour = todayDate.getHours();
     
-    appData.statsHistory[today].pomodoros++;
-    const mins = Math.floor(seconds / 60);
-    appData.statsHistory[today].workMinutes += mins;
+    let totalSeconds = Math.floor((endObj - startObj) / 1000);
+    if (totalSeconds <= 0) return;
     
-    if(!appData.statsHistory[today].hourly) appData.statsHistory[today].hourly = {};
-    appData.statsHistory[today].hourly[currentHour] = (appData.statsHistory[today].hourly[currentHour] || 0) + mins;
+    let currentStart = new Date(startObj.getTime());
     
-    if(!appData.statsHistory[today].sessions) appData.statsHistory[today].sessions = [];
-    appData.statsHistory[today].sessions.push({
+    if (isFullPomo) {
+        const endDateStr = endObj.toISOString().split('T')[0];
+        if(!appData.statsHistory[endDateStr]) {
+            appData.statsHistory[endDateStr] = { hourly: {}, workMinutes: 0, pomodoros: 0, sessions: [] };
+        }
+        appData.statsHistory[endDateStr].pomodoros++;
+    }
+    
+    while (currentStart < endObj) {
+        let dateStr = currentStart.toISOString().split('T')[0];
+        let currentHour = currentStart.getHours();
+        
+        let nextHour = new Date(currentStart);
+        nextHour.setHours(currentHour + 1, 0, 0, 0);
+        
+        let chunkEnd = (nextHour < endObj) ? nextHour : endObj;
+        let chunkSeconds = Math.floor((chunkEnd - currentStart) / 1000);
+        let chunkMins = chunkSeconds / 60;
+        
+        if(!appData.statsHistory[dateStr]) {
+            appData.statsHistory[dateStr] = { hourly: {}, workMinutes: 0, pomodoros: 0, sessions: [] };
+        }
+        
+        appData.statsHistory[dateStr].workMinutes += chunkMins;
+        if(!appData.statsHistory[dateStr].hourly) appData.statsHistory[dateStr].hourly = {};
+        appData.statsHistory[dateStr].hourly[currentHour] = (appData.statsHistory[dateStr].hourly[currentHour] || 0) + chunkMins;
+        
+        currentStart = nextHour;
+    }
+    
+    const sessionDateStr = startObj.toISOString().split('T')[0];
+    if(!appData.statsHistory[sessionDateStr]) {
+        appData.statsHistory[sessionDateStr] = { hourly: {}, workMinutes: 0, pomodoros: 0, sessions: [] };
+    }
+    if(!appData.statsHistory[sessionDateStr].sessions) appData.statsHistory[sessionDateStr].sessions = [];
+    appData.statsHistory[sessionDateStr].sessions.push({
         start: startObj.toISOString(),
         end: endObj.toISOString(),
-        durationSeconds: seconds
+        durationSeconds: totalSeconds,
+        isFullPomo: isFullPomo
     });
     
     saveAppData();
@@ -1427,8 +1554,9 @@ function updateStatsUI() {
     const statWork = document.getElementById("stat-work");
     const statPomos = document.getElementById("stat-pomos");
     if(statWork && statPomos) {
-        let hrs = Math.floor(totalMins / 60);
-        let remMins = totalMins % 60;
+        let roundedMins = Math.round(totalMins);
+        let hrs = Math.floor(roundedMins / 60);
+        let remMins = roundedMins % 60;
         statWork.textContent = hrs > 0 ? `${hrs}h ${remMins}m` : `${remMins}m`;
         statPomos.textContent = totalPomos;
     }
@@ -1558,13 +1686,13 @@ function renderTasks() {
                 </label>
             </div>
             <div class="notion-cell notion-col-name">
-                <input type="text" class="task-input" style="${task.completed ? 'text-decoration: line-through; opacity: 0.5;' : ''}" value="${task.name}" onchange="updateTask('${task.id}', 'name', this.value)">
+                <input type="text" class="task-input" style="${task.completed ? 'text-decoration: line-through; opacity: 0.5;' : ''}" value="${task.name}" onchange="updateTask('${task.id}', 'name', this.value)" onblur="checkTaskName('${task.id}', this.value)">
             </div>
             <div class="notion-cell notion-col-macro">
-                <span class="${mClass}">${mText}</span>
+                <span class="${mClass}" style="cursor: pointer;" onclick="openGlobalDropdown(event, '${task.id}', 'macroSubject')">${mText}</span>
             </div>
             <div class="notion-cell notion-col-subject">
-                <span class="${sClass}">${sText}</span>
+                <span class="${sClass}" style="cursor: pointer;" onclick="openGlobalDropdown(event, '${task.id}', 'subject')">${sText}</span>
             </div>
             <div class="notion-cell notion-col-priority">
                 <span class="${pClass}" onclick="cyclePriority('${task.id}')">${pText}</span>
@@ -1574,6 +1702,9 @@ function renderTasks() {
             </div>
             <div class="notion-cell notion-col-date">
                 <input type="date" class="task-input" style="color: rgba(255,255,255,0.6); padding: 0;" value="${task.endDate || ''}" onchange="updateTask('${task.id}', 'endDate', this.value)">
+            </div>
+            <div class="notion-cell notion-col-delete" style="width: 3vw; display: flex; justify-content: center;">
+                <span class="material-icons" style="cursor: pointer; opacity: 0.5; font-size: 2vh; transition: opacity 0.2s;" onmouseover="this.style.opacity=1; this.style.color='rgba(255, 50, 50, 0.8)'" onmouseout="this.style.opacity=0.5; this.style.color='inherit'" onclick="deleteTask('${task.id}')">delete</span>
             </div>
         `;
         body.appendChild(row);
@@ -1610,12 +1741,93 @@ function updateTask(id, field, value) {
     const task = appData.tasks.find(t => t.id === id);
     if (task) {
         task[field] = value;
+        if (field === 'macroSubject') {
+            task.subject = ''; // Reset subject when macro changes
+        }
         saveAppData();
-        if (field === 'completed' || currentSortCol === field) {
+        if (field === 'completed' || currentSortCol === field || field === 'macroSubject') {
             renderTasks();
         }
     }
 }
+
+function checkTaskName(id, value) {
+    if (value.trim() === '') {
+        deleteTask(id);
+    }
+}
+
+function deleteTask(id) {
+    appData.tasks = appData.tasks.filter(t => t.id !== id);
+    saveAppData();
+    renderTasks();
+}
+
+function openGlobalDropdown(event, taskId, field) {
+    event.stopPropagation(); // Evita conflitti
+    const dropdown = document.getElementById("global-db-dropdown");
+    const task = appData.tasks.find(t => t.id === taskId);
+    if (!task || !dropdown) return;
+
+    dropdown.innerHTML = "";
+    
+    let options = [];
+    if (field === 'macroSubject') {
+        const fromProjects = Object.keys(appData.projects);
+        const fromTasks = appData.tasks.map(t => t.macroSubject).filter(Boolean);
+        options = [...new Set([...fromProjects, ...fromTasks])];
+    } else if (field === 'subject') {
+        const macro = task.macroSubject;
+        const fromProjects = (macro && appData.projects[macro]) ? appData.projects[macro].subtopics : [];
+        const fromTasks = appData.tasks.filter(t => t.macroSubject === macro).map(t => t.subject).filter(Boolean);
+        options = [...new Set([...fromProjects, ...fromTasks])];
+    }
+
+    // Aggiungi l'opzione "Empty"
+    const emptyDiv = document.createElement("div");
+    emptyDiv.className = "subject-dropdown-item";
+    emptyDiv.style.opacity = "0.6";
+    emptyDiv.style.padding = "0.8vh 1vw";
+    emptyDiv.style.fontSize = "1.4vh";
+    emptyDiv.innerText = "Empty";
+    emptyDiv.onclick = function(e) {
+        e.stopPropagation();
+        updateTask(taskId, field, "");
+        dropdown.style.display = "none";
+    };
+    dropdown.appendChild(emptyDiv);
+
+    options.forEach(opt => {
+        const div = document.createElement("div");
+        div.className = "subject-dropdown-item";
+        div.style.padding = "0.8vh 1vw";
+        div.style.fontSize = "1.4vh";
+        div.innerText = opt;
+        if (task[field] === opt) {
+            div.style.background = "rgba(255,255,255,0.1)"; // Indica l'attuale
+        }
+        div.onclick = function(e) {
+            e.stopPropagation();
+            updateTask(taskId, field, opt);
+            dropdown.style.display = "none";
+        };
+        dropdown.appendChild(div);
+    });
+
+    // Posiziona il dropdown
+    const rect = event.target.getBoundingClientRect();
+    dropdown.style.top = (rect.bottom + window.scrollY + 5) + "px";
+    dropdown.style.left = rect.left + "px";
+    dropdown.style.display = "block";
+}
+
+// Chiudi il dropdown globale cliccando altrove
+document.addEventListener('click', function(e) {
+    const dbDropdown = document.getElementById("global-db-dropdown");
+    if (dbDropdown && dbDropdown.style.display === "block" && !dbDropdown.contains(e.target)) {
+        dbDropdown.style.display = "none";
+    }
+});
 
 function toggleTaskCompletion(id) {
     const task = appData.tasks.find(t => t.id === id);
@@ -1623,6 +1835,27 @@ function toggleTaskCompletion(id) {
         task.completed = !task.completed;
         saveAppData();
         renderTasks();
+    }
+}
+
+function setFocusFromTag(macro, subject) {
+    const subjectInput = document.getElementById("subject-input");
+    const subtopicInput = document.getElementById("subtopic-input");
+    
+    if (macro && macro !== "undefined" && macro !== "Empty") {
+        subjectInput.value = macro;
+        subjectInput.dispatchEvent(new Event('input'));
+    }
+    
+    if (subject && subject !== "undefined" && subject !== "Empty") {
+        subtopicInput.value = subject;
+        subtopicInput.dispatchEvent(new Event('input'));
+    }
+    
+    // Scrolla in cima allo specchietto per mostrare all'utente che il focus è cambiato
+    const leftPanel = document.querySelector('.left-panel');
+    if (leftPanel) {
+        leftPanel.scrollTo({ top: 0, behavior: 'smooth' });
     }
 }
 
