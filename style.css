@@ -250,8 +250,7 @@
 
         /* Timer piccolo quando il lavoro è in pausa */
         .timer-small {
-            left: 15% !important; /* Ancora più a sinistra */
-            top: 70% !important; /* Più in basso */
+            top: 50% !important; /* Messo in centro verticale */
             width: min(50vw, 180px) !important;
             height: min(50vw, 180px) !important;
         }
@@ -265,7 +264,7 @@
         }
         /* Timer della pausa - diventa grande al centro */
         .break-timer-large {
-            left: 65% !important;
+            left: 68% !important;
             top: 50% !important;
             width: min(120vw, 700px);
             height: min(120vw, 700px);
@@ -289,10 +288,9 @@
         }
         /* Torna alla posizione di default dopo la pausa */
         .break-timer-reset {
-            left: 80% !important;
-            top: 70% !important;
-            width: min(22vw, 150px) !important;
-            height: min(22vw, 150px) !important;
+            top: 50% !important; /* Messo in centro verticale */
+            width: min(50vw, 180px) !important;
+            height: min(50vw, 180px) !important;
         }
         /* MODERN POP-UP STYLE */
         .popup {
@@ -1999,7 +1997,7 @@
         body.timer-running .break-timer-large, body.panel-collapsed .break-timer-large {
             left: 50% !important;
         }
-        .break-timer:not(.break-timer-large) {
+        .break-timer-container:not(.break-timer-large) {
             left: 90% !important;
             opacity: 0.3 !important;
             transform: translate(-50%, -50%) scale(0.6) !important;
@@ -2080,7 +2078,7 @@
 
 
 /* Smooth global transitions for timers and controls */
-.timer-container, .break-timer, .controls-container, #subtitle {
+.timer-container, .break-timer-container, .controls-container, #subtitle {
     transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s ease-in-out;
 }
 
