@@ -1118,14 +1118,7 @@ function toggleSubtitle() {
 // ========== NOTION-STYLE SUBJECT INPUT ==========
 const savedSubjects = ["Project A", "Math Exam", "Development", "Reading"];
 
-function toggleIconPicker() {
-    const icons = ['menu_book', 'computer', 'psychology', 'fitness_center', 'palette', 'edit', 'code', 'language', 'calculate', 'public', 'science', 'gavel'];
-    const btnSpan = document.querySelector('#subject-icon-btn .material-icons');
-    if(btnSpan) {
-        let nextIndex = (icons.indexOf(btnSpan.innerText) + 1) % icons.length;
-        btnSpan.innerText = icons[nextIndex];
-    }
-}
+
 
 function clearFocus() {
     document.getElementById("subject-input").value = "";
@@ -1137,8 +1130,8 @@ function clearFocus() {
     document.getElementById("subtopic-container").style.display = "none";
     document.querySelector('.left-section').classList.add('focus-empty');
     
-    const clearBtn = document.getElementById("clear-focus-btn");
-    if (clearBtn) clearBtn.style.display = "none";
+    const editBtn = document.getElementById("edit-macro-btn");
+    if (editBtn) editBtn.style.display = "none";
     
     renderTasks();
 }
@@ -1220,10 +1213,11 @@ function filterSubjectDropdown() {
             dropdown.style.display = "none";
             document.getElementById("subtopic-container").style.display = "flex";
             document.querySelector('.left-section').classList.remove('focus-empty');
+            document.querySelector('.left-section').classList.remove('focus-empty');
             document.getElementById("todo-list-container").style.display = "block";
             
-            const clearBtn = document.getElementById("clear-focus-btn");
-            if (clearBtn) clearBtn.style.display = "flex";
+            const editBtn = document.getElementById("edit-macro-btn");
+            if (editBtn) editBtn.style.display = "flex";
             
             if (typeof initTopic === "function") initTopic(selected, "");
             
@@ -1277,14 +1271,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.querySelector('.left-section').classList.remove('focus-empty');
                 document.getElementById("subtopic-container").style.display = "flex";
                 document.getElementById("todo-list-container").style.display = "block";
-                const clearBtn = document.getElementById("clear-focus-btn");
-                if (clearBtn) clearBtn.style.display = "flex";
+                const editBtn = document.getElementById("edit-macro-btn");
+                if (editBtn) editBtn.style.display = "flex";
                 loadTasks();
             } else {
                 document.querySelector('.left-section').classList.add('focus-empty');
                 document.getElementById("subtopic-container").style.display = "none";
-                const clearBtn = document.getElementById("clear-focus-btn");
-                if (clearBtn) clearBtn.style.display = "none";
+                const editBtn = document.getElementById("edit-macro-btn");
+                if (editBtn) editBtn.style.display = "none";
                 // Don't hide the database when empty project
                 document.getElementById("todo-list-container").style.display = "block";
             }
@@ -1298,8 +1292,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (subjectInput && subjectInput.value.trim().length > 0) {
         document.getElementById("subtopic-container").style.display = "flex";
         document.querySelector('.left-section').classList.remove('focus-empty');
-        const clearBtn = document.getElementById("clear-focus-btn");
-        if (clearBtn) clearBtn.style.display = "flex";
+        const editBtn = document.getElementById("edit-macro-btn");
+        if (editBtn) editBtn.style.display = "flex";
         loadTasks();
     }
 });
@@ -1370,52 +1364,15 @@ function setStatsFilter(filter) {
     updateStatsUI();
 }
 
-function injectMockStats() {
-    if (!appData.statsHistory) appData.statsHistory = {};
-    const today = new Date();
-    for (let i = 0; i <= 35; i++) {
-        let d = new Date(today);
-        d.setDate(d.getDate() - i);
-        let dateStr = d.toISOString().split('T')[0];
-        
-        // Only inject if it doesn't exist or is missing hourly data
-        if (!appData.statsHistory[dateStr] || appData.statsHistory[dateStr].pomodoros === 0 || !appData.statsHistory[dateStr].hourly || Object.keys(appData.statsHistory[dateStr].hourly).length === 0) {
-            let randomMins = Math.floor(Math.random() * 250) + 50;
-            let mockHourly = {};
-            let mockSessions = [];
-            let remaining = randomMins;
-            let hour = 8;
-            while(remaining > 0 && hour <= 22) {
-                let chunk = Math.min(remaining, Math.floor(Math.random() * 45) + 10);
-                mockHourly[hour] = chunk;
-                
-                let numSessions = Math.ceil(chunk / 25);
-                for(let s = 0; s < numSessions; s++) {
-                    let dStart = new Date(d);
-                    dStart.setHours(hour, s * 25, 0);
-                    let dEnd = new Date(dStart.getTime() + (25 * 60000));
-                    mockSessions.push({
-                        start: dStart.toISOString(),
-                        end: dEnd.toISOString(),
-                        durationSeconds: 25 * 60
-                    });
-                }
-                
-                remaining -= chunk;
-                hour++;
-            }
-            appData.statsHistory[dateStr] = {
-                workMinutes: randomMins,
-                pomodoros: Math.floor(randomMins / 25),
-                hourly: mockHourly,
-                sessions: mockSessions
-            };
-        }
-    }
-    saveAppData();
-}
 
 function initStats() {
+    // Pulisci i dati fittizi automaticamente una volta sola
+    if (!localStorage.getItem("mockDataWiped")) {
+        appData.statsHistory = {};
+        localStorage.setItem("mockDataWiped", "true");
+        saveAppData();
+    }
+
     if (!appData.statsHistory) {
         appData.statsHistory = {};
         if (appData.stats && appData.stats.date) {
@@ -1614,7 +1571,6 @@ function drawStatsChart(labels, data) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    injectMockStats();
     updateStatsUI();
 });
 
@@ -1837,6 +1793,90 @@ function toggleTaskCompletion(id) {
         renderTasks();
     }
 }
+
+function toggleSubtask(id) {
+    if (!appData.tasks) return;
+    let t = appData.tasks.find(x => x.id === id);
+    if (t) {
+        t.completed = !t.completed;
+        saveAppData();
+        renderTasks();
+    }
+}
+
+// ====== EDIT MACRO SUBJECT POPUP ======
+function openMacroEditPopup() {
+    const proj = getCurrentProject();
+    if (!proj) return;
+    document.getElementById("macro-rename-input").value = proj;
+    document.getElementById("macro-edit-popup").style.display = "flex";
+}
+
+function closeMacroEditPopup() {
+    document.getElementById("macro-edit-popup").style.display = "none";
+}
+
+function saveMacroRename() {
+    const oldProj = getCurrentProject();
+    const newProj = document.getElementById("macro-rename-input").value.trim();
+    if (!newProj || newProj === oldProj) {
+        closeMacroEditPopup();
+        return;
+    }
+    
+    // Rename in appData projects
+    if (appData.projects[oldProj]) {
+        appData.projects[newProj] = appData.projects[oldProj];
+        delete appData.projects[oldProj];
+    }
+    
+    // Rename tasks that have this macro subject
+    if (appData.tasks) {
+        appData.tasks.forEach(t => {
+            if (t.macroSubject === oldProj) {
+                t.macroSubject = newProj;
+            }
+        });
+    }
+    
+    // Update savedSubjects array
+    const idx = savedSubjects.indexOf(oldProj);
+    if (idx !== -1) {
+        savedSubjects[idx] = newProj;
+    }
+    
+    saveAppData();
+    
+    // Update UI
+    document.getElementById("subject-input").value = newProj;
+    loadTasks();
+    closeMacroEditPopup();
+}
+
+function deleteMacroSubject() {
+    const proj = getCurrentProject();
+    if (!proj) return;
+    
+    if (confirm(`Are you sure you want to delete the macro subject "${proj}" and ALL its tasks?`)) {
+        if (appData.projects[proj]) {
+            delete appData.projects[proj];
+        }
+        
+        if (appData.tasks) {
+            appData.tasks = appData.tasks.filter(t => t.macroSubject !== proj);
+        }
+        
+        const idx = savedSubjects.indexOf(proj);
+        if (idx !== -1) {
+            savedSubjects.splice(idx, 1);
+        }
+        
+        saveAppData();
+        clearFocus();
+        closeMacroEditPopup();
+    }
+}
+
 
 function setFocusFromTag(macro, subject) {
     const subjectInput = document.getElementById("subject-input");

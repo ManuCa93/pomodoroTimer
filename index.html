@@ -117,15 +117,15 @@
             <h3 class="panel-title">Current Focus</h3>
             <div class="unified-task-block" style="width: 100%; margin: 0 auto; box-sizing: border-box; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 1vh 1vw; display: flex; flex-direction: column; gap: 1vh;">
                 <div class="subject-container" id="subject-container" style="position: relative; z-index: 50; background: transparent; border: none; padding: 0; width: 100%;">
-                <button id="subject-icon-btn" onclick="toggleIconPicker()">
-                    <span class="material-icons">menu_book</span>
+                <button id="subject-icon-btn" onclick="clearFocus()">
+                    <span class="material-icons">home</span>
                 </button>
                 <div style="position: relative; display: flex; flex-direction: column; flex: 1; min-width: 0; z-index: 50;">
                     <input type="text" id="subject-input" placeholder="Macro-subject..." maxlength="40" autocomplete="off" onfocus="showSubjectDropdown()" oninput="filterSubjectDropdown()" onkeydown="handleDropdownKeydown(event, 'subject-input', 'subject-dropdown')">
                     <div id="subject-dropdown" class="subject-dropdown" style="display: none;"></div>
                 </div>
-                <button id="clear-focus-btn" class="notion-btn" onclick="clearFocus()" style="margin-left: 0.5vw; padding: 0.5vh; display: none;" title="Clear Focus / Home">
-                    <span class="material-icons" style="font-size: 2.2vh;">home</span>
+                <button id="edit-macro-btn" class="notion-btn" onclick="openMacroEditPopup()" style="margin-left: 0.5vw; padding: 0.5vh; display: none;" title="Edit/Delete Macro Subject">
+                    <span class="material-icons" style="font-size: 2.2vh;">edit</span>
                 </button>
             </div>
             
@@ -447,6 +447,27 @@
     <!-- Global DB Select Dropdown -->
     <div id="global-db-dropdown" class="subject-dropdown" style="display: none; position: fixed; z-index: 999999; width: auto; min-width: 15vw; max-height: 30vh;"></div>
 
+    <!-- Popup per modificare/eliminare il macro subject -->
+    <div id="macro-edit-popup" class="popup">
+        <div class="popup-content">
+            <h2 style="margin-top: 5vh; color: var(--primary-color);">Edit Macro Subject</h2>
+            <button class="close-btn-top" onclick="closeMacroEditPopup()">
+                <span class="material-icons">close</span>
+            </button>
+            <div class="settings-container">
+                <div class="settings-group">
+                    <label>Rename Subject:</label>
+                    <input type="text" id="macro-rename-input" maxlength="40" style="width: 100%; box-sizing: border-box;" onkeydown="if(event.key === 'Enter') saveMacroRename()">
+                </div>
+            </div>
+            <div class="button-group" style="margin-top: 20px;">
+                <button class="update-session-btn" onclick="saveMacroRename()">
+                    <span class="material-icons" style="vertical-align: middle;">save</span> Save
+                </button>
+                <button class="stop-session-btn" onclick="deleteMacroSubject()">
+                    <span class="material-icons" style="vertical-align: middle;">delete</span> Delete
+                </button>
+            </div>
     <script src="script.js"></script>
 </body>
 </html>

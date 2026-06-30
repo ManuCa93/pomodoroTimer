@@ -17,52 +17,15 @@ function setStatsFilter(filter) {
     updateStatsUI();
 }
 
-function injectMockStats() {
-    if (!appData.statsHistory) appData.statsHistory = {};
-    const today = new Date();
-    for (let i = 0; i <= 35; i++) {
-        let d = new Date(today);
-        d.setDate(d.getDate() - i);
-        let dateStr = d.toISOString().split('T')[0];
-        
-        // Only inject if it doesn't exist
-        if (!appData.statsHistory[dateStr] || appData.statsHistory[dateStr].pomodoros === 0) {
-            let randomMins = Math.floor(Math.random() * 250) + 50;
-            let mockHourly = {};
-            let mockSessions = [];
-            let remaining = randomMins;
-            let hour = 8;
-            while(remaining > 0 && hour <= 22) {
-                let chunk = Math.min(remaining, Math.floor(Math.random() * 45) + 10);
-                mockHourly[hour] = chunk;
-                
-                let numSessions = Math.ceil(chunk / 25);
-                for(let s = 0; s < numSessions; s++) {
-                    let dStart = new Date(d);
-                    dStart.setHours(hour, s * 25, 0);
-                    let dEnd = new Date(dStart.getTime() + (25 * 60000));
-                    mockSessions.push({
-                        start: dStart.toISOString(),
-                        end: dEnd.toISOString(),
-                        durationSeconds: 25 * 60
-                    });
-                }
-                
-                remaining -= chunk;
-                hour++;
-            }
-            appData.statsHistory[dateStr] = {
-                workMinutes: randomMins,
-                pomodoros: Math.floor(randomMins / 25),
-                hourly: mockHourly,
-                sessions: mockSessions
-            };
-        }
-    }
-    saveAppData();
-}
 
 function initStats() {
+    // Pulisci i dati fittizi automaticamente una volta sola
+    if (!localStorage.getItem("mockDataWiped")) {
+        appData.statsHistory = {};
+        localStorage.setItem("mockDataWiped", "true");
+        saveAppData();
+    }
+
     if (!appData.statsHistory) {
         appData.statsHistory = {};
         if (appData.stats && appData.stats.date) {
@@ -228,6 +191,5 @@ function drawStatsChart(labels, data) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    injectMockStats();
     updateStatsUI();
 });
