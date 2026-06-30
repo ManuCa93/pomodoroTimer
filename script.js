@@ -579,13 +579,12 @@ function saveSettings() {
     // Dopo 1.5 secondi, chiude il pop-up e avvia il primo pomodoro
     setTimeout(() => {
         message.classList.remove("show");
-        closeSettings();
+        closeInfoPopup();
         startTimer(); // Avvia il primo pomodoro
         toggleTitleVisibility(); // Nascondi il titolo
         updateSubtitle(); // Mostra il sottotitolo
     }, 1500);
     resetSession();
-    toggleEditMode();
 }
 
 function toggleEditMode() {
@@ -840,11 +839,20 @@ function closeInfoPopup() {
 // Chiudi info-popup cliccando fuori dal rettangolo
 document.addEventListener('click', function(e) {
     const infoPopup = document.getElementById("info-popup");
-    if (infoPopup && infoPopup.style.display === "flex" && e.target === infoPopup) {
-        if (typeof saveSettings === 'function') {
-            saveSettings();
+    const openBtn = document.getElementById("settings-button-menu");
+    if (infoPopup && window.getComputedStyle(infoPopup).display !== "none") {
+        const popupContent = infoPopup.querySelector(".popup-content");
+        // Se clicchiamo sullo sfondo sfocato (non sul contenuto, e non sul bottone per aprirlo)
+        if (popupContent && !popupContent.contains(e.target) && (!openBtn || !openBtn.contains(e.target))) {
+            // Salva solo in localStorage (non resetta il timer attivo bruscamente)
+            if (document.getElementById("numPomodoros")) {
+                localStorage.setItem("numPomodoros", parseInt(document.getElementById("numPomodoros").value));
+                localStorage.setItem("workDuration", parseInt(document.getElementById("workDuration").value) * 60);
+                localStorage.setItem("shortBreak", parseInt(document.getElementById("shortBreak").value) * 60);
+                localStorage.setItem("longBreak", parseInt(document.getElementById("longBreak").value) * 60);
+            }
+            closeInfoPopup();
         }
-        closeInfoPopup();
     }
 });
 
