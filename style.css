@@ -1281,6 +1281,17 @@
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 var(--primary-color);
             animation: contentScale 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
+        .info-menu-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .info-menu-content::-webkit-scrollbar-track {
+            background: transparent;
+            margin: 2vmax 0; /* Keeps scrollbar away from rounded corners */
+        }
+        .info-menu-content::-webkit-scrollbar-thumb {
+            background: rgba(138, 43, 226, 0.5);
+            border-radius: 10px;
+        }
 
         @keyframes contentScale {
             from {
@@ -2182,6 +2193,7 @@
 .notion-db-container {
     margin-top: 2vh;
     width: 100%;
+    box-sizing: border-box; /* Prevent padding from overflowing parent */
     background: rgba(0, 0, 0, 0.4);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 10px;

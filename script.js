@@ -837,6 +837,17 @@ function closeInfoPopup() {
     }, 300);
 }
 
+// Chiudi info-popup cliccando fuori dal rettangolo
+document.addEventListener('click', function(e) {
+    const infoPopup = document.getElementById("info-popup");
+    if (infoPopup && infoPopup.style.display === "flex" && e.target === infoPopup) {
+        if (typeof saveSettings === 'function') {
+            saveSettings();
+        }
+        closeInfoPopup();
+    }
+});
+
 function switchMenuTab(tabName) {
     // Nascondi tutti i tab
     const allTabs = document.querySelectorAll(".menu-tab-content");
