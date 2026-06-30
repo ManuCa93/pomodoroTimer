@@ -1441,11 +1441,17 @@ function recordSessionTime(startObj, endObj, isFullPomo) {
         appData.statsHistory[sessionDateStr] = { hourly: {}, workMinutes: 0, pomodoros: 0, sessions: [] };
     }
     if(!appData.statsHistory[sessionDateStr].sessions) appData.statsHistory[sessionDateStr].sessions = [];
+    
+    const macroSubject = (typeof getCurrentProject === 'function' ? getCurrentProject() : '') || '';
+    const microSubject = (typeof getCurrentTopic === 'function' ? getCurrentTopic() : '') || '';
+
     appData.statsHistory[sessionDateStr].sessions.push({
         start: startObj.toISOString(),
         end: endObj.toISOString(),
         durationSeconds: totalSeconds,
-        isFullPomo: isFullPomo
+        isFullPomo: isFullPomo,
+        macroSubject: macroSubject,
+        microSubject: microSubject
     });
     
     saveAppData();
@@ -1459,41 +1465,80 @@ function updateStatsUI() {
     let totalPomos = 0;
     let totalMins = 0;
     let chartLabels = [];
-    let chartData = [];
+    let datasetsMap = {}; // macroName -> array of data corresponding to chartLabels
     
     const today = new Date();
     today.setHours(0,0,0,0);
     
+    // Helper to add data to the right dataset
+    function addDataToMacro(macro, labelIndex, mins) {
+        let name = macro ? macro : "General";
+        if (!datasetsMap[name]) {
+            datasetsMap[name] = new Array(chartLabels.length).fill(0);
+        }
+        datasetsMap[name][labelIndex] += mins;
+    }
+
     if (filter === "today") {
         let todayStr = new Date().toISOString().split('T')[0];
         let todayStats = appData.statsHistory[todayStr] || { hourly: {}, workMinutes: 0, pomodoros: 0, sessions: [] };
         totalPomos = todayStats.pomodoros || 0;
         totalMins = todayStats.workMinutes || 0;
         
-        let hourlyData = todayStats.hourly || {};
         for(let h = 0; h <= 23; h++) {
             chartLabels.push(h.toString().padStart(2, '0') + ":00");
-            chartData.push(hourlyData[h] || 0);
         }
+        
+        // Populate datasets from sessions
+        if (todayStats.sessions && todayStats.sessions.length > 0) {
+            todayStats.sessions.forEach(sess => {
+                let sStart = new Date(sess.start);
+                let sEnd = new Date(sess.end);
+                let current = new Date(sStart);
+                while(current < sEnd) {
+                    let cHour = current.getHours();
+                    let next = new Date(current);
+                    next.setHours(cHour + 1, 0, 0, 0);
+                    let chunkEnd = (next < sEnd) ? next : sEnd;
+                    let chunkMins = (chunkEnd - current) / 1000 / 60;
+                    addDataToMacro(sess.macroSubject, cHour, chunkMins);
+                    current = next;
+                }
+            });
+        } else {
+            // Legacy fallback if no sessions but has hourly data
+            let hourlyData = todayStats.hourly || {};
+            for(let h = 0; h <= 23; h++) {
+                if (hourlyData[h]) {
+                    addDataToMacro("General", h, hourlyData[h]);
+                }
+            }
+        }
+        
     } else if (filter !== "lifetime") {
         let daysToLookBack = (filter === "7days") ? 7 : 30;
         for (let i = daysToLookBack - 1; i >= 0; i--) {
             let d = new Date(today);
             d.setDate(d.getDate() - i);
             let dateStr = d.toISOString().split('T')[0];
-            
-            let pomos = 0;
-            let mins = 0;
-            if (appData.statsHistory[dateStr]) {
-                pomos = appData.statsHistory[dateStr].pomodoros || 0;
-                mins = appData.statsHistory[dateStr].workMinutes || 0;
-            }
-            
-            totalPomos += pomos;
-            totalMins += mins;
             let label = filter === "7days" ? d.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' }) : d.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
             chartLabels.push(label);
-            chartData.push(mins);
+            let labelIdx = chartLabels.length - 1;
+            
+            if (appData.statsHistory[dateStr]) {
+                totalPomos += appData.statsHistory[dateStr].pomodoros || 0;
+                totalMins += appData.statsHistory[dateStr].workMinutes || 0;
+                
+                let sessions = appData.statsHistory[dateStr].sessions || [];
+                if (sessions.length > 0) {
+                    sessions.forEach(sess => {
+                        let mins = (sess.durationSeconds || 0) / 60;
+                        addDataToMacro(sess.macroSubject, labelIdx, mins);
+                    });
+                } else if (appData.statsHistory[dateStr].workMinutes) {
+                    addDataToMacro("General", labelIdx, appData.statsHistory[dateStr].workMinutes);
+                }
+            }
         }
     } else {
         let sortedDates = Object.keys(appData.statsHistory).sort();
@@ -1502,11 +1547,45 @@ function updateStatsUI() {
             let mins = appData.statsHistory[dateStr].workMinutes || 0;
             totalPomos += pomos;
             totalMins += mins;
+            
             let d = new Date(dateStr);
             chartLabels.push(d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
-            chartData.push(mins);
+            let labelIdx = chartLabels.length - 1;
+            
+            let sessions = appData.statsHistory[dateStr].sessions || [];
+            if (sessions.length > 0) {
+                sessions.forEach(sess => {
+                    let sMins = (sess.durationSeconds || 0) / 60;
+                    addDataToMacro(sess.macroSubject, labelIdx, sMins);
+                });
+            } else if (mins > 0) {
+                addDataToMacro("General", labelIdx, mins);
+            }
         });
     }
+
+    // Convert datasetsMap to Chart.js datasets array
+    let datasets = [];
+    const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#8A2BE2';
+    
+    Object.keys(datasetsMap).forEach(macroName => {
+        let bgColor = primaryColor;
+        if (macroName !== "General") {
+            let hash = 0;
+            for (let i = 0; i < macroName.length; i++) {
+                hash = macroName.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const hue = Math.abs(hash % 360);
+            bgColor = `hsl(${hue}, 70%, 60%)`;
+        }
+        datasets.push({
+            label: macroName,
+            data: datasetsMap[macroName],
+            backgroundColor: bgColor,
+            borderRadius: 4,
+            stack: 'Stack 0' // Enable stacking
+        });
+    });
 
     const statWork = document.getElementById("stat-work");
     const statPomos = document.getElementById("stat-pomos");
@@ -1518,15 +1597,14 @@ function updateStatsUI() {
         statPomos.textContent = totalPomos;
     }
     
-    drawStatsChart(chartLabels, chartData);
+    drawStatsChart(chartLabels, datasets);
 }
 
-function drawStatsChart(labels, data) {
+function drawStatsChart(labels, datasets) {
     const canvas = document.getElementById('stats-chart');
     if (!canvas || typeof Chart === 'undefined') return;
     
     const ctx = canvas.getContext('2d');
-    const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#8A2BE2';
     
     if (statsChartInstance) {
         statsChartInstance.destroy();
@@ -1536,12 +1614,7 @@ function drawStatsChart(labels, data) {
         type: 'bar',
         data: {
             labels: labels,
-            datasets: [{
-                label: 'Work Minutes',
-                data: data,
-                backgroundColor: primaryColor,
-                borderRadius: 4,
-            }]
+            datasets: datasets
         },
         options: {
             responsive: true,
@@ -1549,19 +1622,23 @@ function drawStatsChart(labels, data) {
             plugins: {
                 legend: { display: false },
                 tooltip: {
+                    mode: 'index',
+                    intersect: false,
                     callbacks: {
                         label: function(context) {
-                            return context.raw + ' mins';
+                            return context.dataset.label + ': ' + context.raw.toFixed(1) + ' mins';
                         }
                     }
                 }
             },
             scales: {
                 x: {
+                    stacked: true,
                     grid: { display: false, drawBorder: false },
                     ticks: { color: 'rgba(255, 255, 255, 0.6)', font: { size: 10 } }
                 },
                 y: {
+                    stacked: true,
                     display: false,
                     beginAtZero: true
                 }
