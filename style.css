@@ -139,8 +139,8 @@
         .break-timer-container {
             z-index: 10;
             position: absolute;
-            top: 75%; /* Più in basso per allontanarlo */
-            left: 90%; /* Posizione iniziale a destra */
+            top: 65%; /* Sotto il numero principale, dentro il cerchio */
+            left: 74%; /* Centrato come il cerchio grande */
             transform: translate(-50%, -50%);
             display: flex;
             justify-content: center;
@@ -249,8 +249,8 @@
         /* Timer piccolo quando il lavoro è in pausa */
         .timer-small {
             z-index: 10 !important;
-            left: 90% !important;
-            top: 75% !important;
+            left: 74% !important;
+            top: 65% !important;
             width: min(15vw, 20vh, 120px) !important;
             height: min(15vw, 20vh, 120px) !important;
             opacity: 1 !important;
@@ -292,8 +292,8 @@
         /* Torna alla posizione di default dopo la pausa */
         .break-timer-reset {
             z-index: 10 !important;
-            left: 85% !important;
-            top: 75% !important;
+            left: 74% !important;
+            top: 65% !important;
             width: min(15vw, 20vh, 120px) !important;
             height: min(15vw, 20vh, 120px) !important;
             opacity: 1 !important;
@@ -1892,8 +1892,8 @@
             .break-timer-reset {
                 width: 30vw !important;
                 height: 30vw !important;
-                left: 75% !important;
-                top: 75% !important;
+                left: 50% !important;
+                top: 68% !important;
             }
             .close-btn-top {
                 right: 2rem;
@@ -2044,11 +2044,11 @@
             left: 50% !important;
         }
 
-        /* Movimento del timer piccolo per mantenere la stessa distanza dal centro */
+        /* Movimento del timer piccolo insieme al timer grande */
         body.timer-running .timer-small, body.panel-collapsed .timer-small,
         body.timer-running .break-timer-reset, body.panel-collapsed .break-timer-reset,
         body.timer-running .break-timer-container:not(.break-timer-large), body.panel-collapsed .break-timer-container:not(.break-timer-large) {
-            left: 70% !important;
+            left: 50% !important;
         }
 
         body.timer-running #subtitle, body.panel-collapsed #subtitle {
