@@ -130,8 +130,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            width: min(100vw, 500px);
-            height: min(100vw, 500px);
+            width: min(40vw, 55vh, 500px);
+            height: min(40vw, 55vh, 500px);
             transition: all 0.5s ease-in-out;
         }
 
@@ -139,14 +139,14 @@
         .break-timer-container {
             z-index: 10;
             position: absolute;
-            top: 70%; /* Più in basso */
+            top: 75%; /* Più in basso per allontanarlo */
             left: 90%; /* Posizione iniziale a destra */
             transform: translate(-50%, -50%);
             display: flex;
             justify-content: center;
             align-items: center;
-            width: min(42vw, 150px);
-            height: min(42vw, 150px);
+            width: min(15vw, 20vh, 120px);
+            height: min(15vw, 20vh, 120px);
             transition: all 0.5s ease-in-out;
         }
         /* Controlli */
@@ -230,7 +230,7 @@
 
         /* Icona visibile e interattiva */
         .modern-button .material-icons {
-            font-size: 7rem; /* Ingranditi i bottoni in basso */
+            font-size: clamp(3.5rem, 6vw, 7rem); /* Ingranditi i bottoni ma scalati */
             color: var(--primary-color);
             transition: color 0.3s ease, transform 0.2s ease;
         }
@@ -250,9 +250,9 @@
         .timer-small {
             z-index: 10 !important;
             left: 90% !important;
-            top: 70% !important;
-            width: min(22vw, 150px) !important;
-            height: min(22vw, 150px) !important;
+            top: 75% !important;
+            width: min(15vw, 20vh, 120px) !important;
+            height: min(15vw, 20vh, 120px) !important;
             opacity: 1 !important;
             transform: translate(-50%, -50%) !important;
         }
@@ -269,8 +269,8 @@
             z-index: 1 !important;
             left: 74% !important;
             top: 50% !important;
-            width: min(100vw, 500px) !important;
-            height: min(100vw, 500px) !important;
+            width: min(40vw, 55vh, 500px) !important;
+            height: min(40vw, 55vh, 500px) !important;
             transform: translate(-50%, -50%);
         }
         .break-timer-large .time {
@@ -293,9 +293,9 @@
         .break-timer-reset {
             z-index: 10 !important;
             left: 85% !important;
-            top: 70% !important;
-            width: min(22vw, 150px) !important;
-            height: min(22vw, 150px) !important;
+            top: 75% !important;
+            width: min(15vw, 20vh, 120px) !important;
+            height: min(15vw, 20vh, 120px) !important;
             opacity: 1 !important;
             transform: translate(-50%, -50%) !important;
         }
