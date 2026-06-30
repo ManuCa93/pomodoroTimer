@@ -2315,3 +2315,27 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 input[type="date"]::-webkit-calendar-picker-indicator:hover {
     opacity: 1;
 }
+
+/* =======================================================
+   RESPONSIVE DESIGN (Ultrawide & Large Desktops)
+   ======================================================= */
+@media screen and (min-width: 1550px) {
+    .break-timer-container {
+        top: 75% !important;
+        left: 90% !important;
+    }
+    .timer-small {
+        top: 75% !important;
+        left: 90% !important;
+    }
+    .break-timer-reset {
+        top: 75% !important;
+        left: 85% !important;
+    }
+    
+    body.timer-running .timer-small, body.panel-collapsed .timer-small,
+    body.timer-running .break-timer-reset, body.panel-collapsed .break-timer-reset,
+    body.timer-running .break-timer-container:not(.break-timer-large), body.panel-collapsed .break-timer-container:not(.break-timer-large) {
+        left: 70% !important;
+    }
+}
