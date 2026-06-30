@@ -2331,8 +2331,8 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 /* =======================================================
    RESPONSIVE DESIGN (Ultrawide & Large Desktops)
    ======================================================= */
-@media screen and (min-width: 1550px) {
-    .break-timer-container {
+@media screen and (min-width: 2000px) {
+    .break-timer-container:not(.break-timer-large) {
         top: 75% !important;
         left: 90% !important;
     }
