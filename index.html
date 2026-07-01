@@ -88,11 +88,21 @@
                     <span class="material-icons">keyboard_double_arrow_left</span>
                 </button>
             </h3>
-            <div id="stats-controls" class="stats-segmented-control" style="display: flex; justify-content: center; gap: 0.5vw; margin-bottom: 1.5vh; width: 100%;">
-                <button class="stats-tab active" data-filter="today" onclick="setStatsFilter('today')">1D</button>
-                <button class="stats-tab" data-filter="7days" onclick="setStatsFilter('7days')">7D</button>
-                <button class="stats-tab" data-filter="1month" onclick="setStatsFilter('1month')">30D</button>
-                <button class="stats-tab" data-filter="lifetime" onclick="setStatsFilter('lifetime')">All</button>
+            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 1.5vh;">
+                <div id="stats-controls" class="stats-segmented-control" style="display: flex; justify-content: center; gap: 0.5vw;">
+                    <button class="stats-tab active" data-filter="today" onclick="setStatsFilter('today')">1D</button>
+                    <button class="stats-tab" data-filter="7days" onclick="setStatsFilter('7days')">7D</button>
+                    <button class="stats-tab" data-filter="1month" onclick="setStatsFilter('1month')">30D</button>
+                    <button class="stats-tab" data-filter="lifetime" onclick="setStatsFilter('lifetime')">All</button>
+                </div>
+                <div class="chart-type-toggle">
+                    <button class="chart-type-btn active" data-chart="bar" onclick="setChartType('bar')" title="Bar Chart">
+                        <span class="material-icons">bar_chart</span>
+                    </button>
+                    <button class="chart-type-btn" data-chart="line" onclick="setChartType('line')" title="Line Chart">
+                        <span class="material-icons">show_chart</span>
+                    </button>
+                </div>
             </div>
             <div id="stats-content" class="stats-content" style="display: flex; justify-content: space-between; width: 100%; box-sizing: border-box; margin: 0 auto 1.5vh auto; font-size: 1.6vh;">
                 <div style="display: flex; flex-direction: column; align-items: center; background: rgba(0,0,0,0.3); padding: 1vh 2vw; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">

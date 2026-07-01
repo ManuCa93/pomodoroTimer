@@ -1,6 +1,19 @@
 // ====== STATS LOGIC ======
 let statsChartInstance = null;
 let currentStatsFilter = 'today';
+let currentChartType = 'bar';
+
+function setChartType(type) {
+    currentChartType = type;
+    document.querySelectorAll('.chart-type-btn').forEach(btn => {
+        if (btn.dataset.chart === type) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+    updateStatsUI();
+}
 
 function setStatsFilter(filter) {
     currentStatsFilter = filter;
@@ -152,16 +165,41 @@ function drawStatsChart(labels, data) {
         statsChartInstance.destroy();
     }
     
+    const isLine = currentChartType === 'line';
+    
+    // Build gradient for line chart fill
+    let gradient = null;
+    if (isLine) {
+        gradient = ctx.createLinearGradient(0, 0, 0, canvas.parentElement.clientHeight || 200);
+        gradient.addColorStop(0, primaryColor + '55');
+        gradient.addColorStop(1, primaryColor + '00');
+    }
+    
+    const datasetConfig = isLine ? {
+        label: 'Work Minutes',
+        data: data,
+        borderColor: primaryColor,
+        backgroundColor: gradient,
+        fill: true,
+        tension: 0.4,
+        borderWidth: 2,
+        pointBackgroundColor: primaryColor,
+        pointBorderColor: 'rgba(255,255,255,0.8)',
+        pointBorderWidth: 1,
+        pointRadius: 3,
+        pointHoverRadius: 5,
+    } : {
+        label: 'Work Minutes',
+        data: data,
+        backgroundColor: primaryColor,
+        borderRadius: 4,
+    };
+    
     statsChartInstance = new Chart(ctx, {
-        type: 'bar',
+        type: isLine ? 'line' : 'bar',
         data: {
             labels: labels,
-            datasets: [{
-                label: 'Work Minutes',
-                data: data,
-                backgroundColor: primaryColor,
-                borderRadius: 4,
-            }]
+            datasets: [datasetConfig]
         },
         options: {
             responsive: true,

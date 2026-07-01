@@ -1373,6 +1373,19 @@ document.addEventListener("click", function(event) {
 // ====== STATS LOGIC ======
 let statsChartInstance = null;
 let currentStatsFilter = 'today';
+let currentChartType = 'bar';
+
+function setChartType(type) {
+    currentChartType = type;
+    document.querySelectorAll('.chart-type-btn').forEach(btn => {
+        if (btn.dataset.chart === type) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+    updateStatsUI();
+}
 
 function setStatsFilter(filter) {
     currentStatsFilter = filter;
@@ -1635,11 +1648,53 @@ function drawStatsChart(labels, datasets) {
         statsChartInstance.destroy();
     }
     
+    const isLine = currentChartType === 'line';
+    
+    let chartDatasets;
+    if (isLine) {
+        // Convert bar datasets to line datasets
+        chartDatasets = datasets.map(ds => {
+            const color = ds.backgroundColor;
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.parentElement.clientHeight || 200);
+            gradient.addColorStop(0, color + (color.startsWith('hsl') ? '' : '55'));
+            gradient.addColorStop(1, 'transparent');
+            
+            // For HSL colors, create a semi-transparent version
+            let fillColor = gradient;
+            if (color.startsWith('hsl')) {
+                const hslMatch = color.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+                if (hslMatch) {
+                    const fillGradient = ctx.createLinearGradient(0, 0, 0, canvas.parentElement.clientHeight || 200);
+                    fillGradient.addColorStop(0, `hsla(${hslMatch[1]}, ${hslMatch[2]}%, ${hslMatch[3]}%, 0.3)`);
+                    fillGradient.addColorStop(1, `hsla(${hslMatch[1]}, ${hslMatch[2]}%, ${hslMatch[3]}%, 0)`);
+                    fillColor = fillGradient;
+                }
+            }
+            
+            return {
+                label: ds.label,
+                data: ds.data,
+                borderColor: color,
+                backgroundColor: fillColor,
+                fill: true,
+                tension: 0.4,
+                borderWidth: 2,
+                pointBackgroundColor: color,
+                pointBorderColor: 'rgba(255,255,255,0.8)',
+                pointBorderWidth: 1,
+                pointRadius: 3,
+                pointHoverRadius: 5,
+            };
+        });
+    } else {
+        chartDatasets = datasets;
+    }
+    
     statsChartInstance = new Chart(ctx, {
-        type: 'bar',
+        type: isLine ? 'line' : 'bar',
         data: {
             labels: labels,
-            datasets: datasets
+            datasets: chartDatasets
         },
         options: {
             responsive: true,
@@ -1658,12 +1713,12 @@ function drawStatsChart(labels, datasets) {
             },
             scales: {
                 x: {
-                    stacked: true,
+                    stacked: !isLine,
                     grid: { display: false, drawBorder: false },
                     ticks: { color: 'rgba(255, 255, 255, 0.6)', font: { size: 10 } }
                 },
                 y: {
-                    stacked: true,
+                    stacked: !isLine,
                     display: false,
                     beginAtZero: true
                 }

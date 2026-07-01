@@ -1999,6 +1999,39 @@
             border-color: var(--primary-color);
             box-shadow: 0 0 10px rgba(138,43,226,0.3);
         }
+        .chart-type-toggle {
+            display: flex;
+            gap: 0.3vw;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 0.3vh 0.3vw;
+        }
+        .chart-type-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255,255,255,0.4);
+            cursor: pointer;
+            padding: 0.4vh 0.6vw;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        .chart-type-btn .material-icons {
+            font-size: 1.8vh;
+        }
+        .chart-type-btn:hover {
+            color: rgba(255,255,255,0.7);
+            background: rgba(255,255,255,0.08);
+        }
+        .chart-type-btn.active {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 0 8px rgba(138,43,226,0.3);
+        }
         .close-panel-btn {
             background: transparent;
             border: none;
