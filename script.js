@@ -1599,7 +1599,8 @@ function updateStatsUI() {
             totalPomos += pomos;
             totalMins += mins;
             
-            let d = new Date(dateStr);
+            let parts = dateStr.split('-');
+            let d = new Date(parts[0], parts[1] - 1, parts[2]);
             chartLabels.push(d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
             let labelIdx = chartLabels.length - 1;
             
