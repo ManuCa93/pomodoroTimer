@@ -1492,8 +1492,8 @@ function updateStatsUI() {
     let chartLabels = [];
     let datasetsMap = {}; // macroName -> array of data corresponding to chartLabels
     
-    const today = new Date();
-    today.setHours(0,0,0,0);
+    const todayStr = new Date().toISOString().split('T')[0];
+    const baseDate = new Date(todayStr + "T12:00:00Z");
     
     // Helper to add data to the right dataset
     function addDataToMacro(macro, labelIndex, mins) {
@@ -1543,10 +1543,10 @@ function updateStatsUI() {
     } else if (filter !== "lifetime") {
         let daysToLookBack = (filter === "7days") ? 7 : 30;
         for (let i = daysToLookBack - 1; i >= 0; i--) {
-            let d = new Date(today);
-            d.setDate(d.getDate() - i);
+            let d = new Date(baseDate.getTime());
+            d.setUTCDate(d.getUTCDate() - i);
             let dateStr = d.toISOString().split('T')[0];
-            let label = filter === "7days" ? d.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' }) : d.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+            let label = filter === "7days" ? d.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', timeZone: 'UTC' }) : d.toLocaleDateString('en-US', { day: 'numeric', month: 'short', timeZone: 'UTC' });
             chartLabels.push(label);
             let labelIdx = chartLabels.length - 1;
             
