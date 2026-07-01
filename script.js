@@ -766,8 +766,9 @@ function toggleBubbleAnimation(isRunning) {
 function createBubbles() {
     const bubbleContainer = document.querySelector('.bubbles');
 
-    // Numero di bolle da generare
-    const numberOfBubbles = 170;
+    // Meno bolle su tablet e telefoni per performance
+    const isTabletOrPhone = window.innerWidth <= 1199;
+    const numberOfBubbles = isTabletOrPhone ? 60 : 170;
 
     for (let i = 0; i < numberOfBubbles; i++) {
         const bubble = document.createElement('div');
@@ -976,8 +977,10 @@ function regenerateBubbles(count) {
 // Load settings on page load
 window.addEventListener('DOMContentLoaded', () => {
     const bubblesEnabled = localStorage.getItem('bubblesEnabled') !== 'false';
-    const bubblesCount = localStorage.getItem('bubblesCount') || 170;
-    
+    const isTabletOrPhone = window.innerWidth <= 1199;
+    const defaultBubbles = isTabletOrPhone ? 60 : 170;
+    const bubblesCount = localStorage.getItem('bubblesCount') || defaultBubbles;
+
     const bubblesToggle = document.getElementById('bubbles-toggle');
     const bubblesCountInput = document.getElementById('bubbles-count');
     
@@ -995,7 +998,10 @@ window.addEventListener('DOMContentLoaded', () => {
             const bubblesContainer = document.querySelector('.bubbles');
             if (e.target.checked) {
                 console.log('✅ Bubbles ON');
-                regenerateBubbles(170);
+                const isTabletOrPhone = window.innerWidth <= 1199;
+                const defaultBubbles = isTabletOrPhone ? 60 : 170;
+                const countToSet = localStorage.getItem('bubblesCount') || defaultBubbles;
+                regenerateBubbles(parseInt(countToSet));
                 bubblesContainer.style.display = 'block';
                 localStorage.setItem('bubblesEnabled', 'true');
             } else {
@@ -2122,4 +2128,8 @@ function closeLeftPanel() {
 
 document.addEventListener("DOMContentLoaded", () => {
     renderTasks();
+    // Su mobile, parti con il panel chiuso (mostra solo il timer)
+    if (window.innerWidth <= 768) {
+        document.body.classList.add('panel-collapsed');
+    }
 });

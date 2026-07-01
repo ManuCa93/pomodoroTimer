@@ -1884,9 +1884,17 @@
         }
 
         @media screen and (max-width: 768px) { /* Smartphone */
+            body {
+                position: fixed;
+                width: 100vw;
+                height: 100vh;
+            }
             #main-title {
                 font-size: 3vh;
                 top: 4vh;
+                left: 0 !important;
+                width: 100vw !important;
+                text-align: center !important;
             }
             .subject-container {
                 top: 10vh;
@@ -1926,23 +1934,15 @@
             .modern-button .material-icons {
                 font-size: 5rem;
             }
-            svg {
-                width: 80vw;
-                height: 80vw;
+            /* Timer principale al centro (l'SVG scala di conseguenza al 185%) */
+            .timer-container:not(.timer-small),
+            .break-timer-large {
+                width: 44vw !important;
+                height: 44vw !important;
             }
             .break-timer-container {
-                width: 30vw;
-                height: 30vw;
-            }
-            .timer-small {
-                width: 30vw !important;
-                height: 30vw !important;
-            }
-            .break-timer-reset {
-                width: 30vw !important;
-                height: 30vw !important;
-                left: 50% !important;
-                top: 68% !important;
+                width: 15vw;
+                height: 15vw;
             }
             .close-btn-top {
                 right: 2rem;
@@ -1969,7 +1969,146 @@
                 width: 80%;
                 font-size: 2.5vh;
             }
+
+            /* Stats = fullscreen overlay su mobile */
+            .left-panel {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                border-radius: 0 !important;
+                padding: 3vh 6vw !important;
+                z-index: 50 !important;
+                background: rgba(10, 10, 10, 0.95) !important;
+                backdrop-filter: blur(20px) !important;
+                overflow-y: auto !important;
+                transform: none !important;
+                opacity: 1 !important;
+                pointer-events: auto !important;
+                box-sizing: border-box !important;
+            }
+            .left-panel .left-section {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            .left-panel .panel-title {
+                font-size: 2.5vh !important;
+            }
+            .left-panel .stats-tab {
+                padding: 0.6vh 3vw !important;
+                font-size: 1.5vh !important;
+            }
+            .left-panel .chart-type-btn .material-icons {
+                font-size: 2.2vh !important;
+            }
+            .left-panel #stats-chart-container {
+                height: 20vh !important;
+            }
+            /* Quando il panel è chiuso (o timer running), nascondilo */
+            body.panel-collapsed .left-panel,
+            body.timer-running .left-panel {
+                transform: translateX(-110%) !important;
+                opacity: 0 !important;
+                pointer-events: none !important;
+            }
+            /* Nasconde timer e controlli quando il panel è aperto */
+            body:not(.panel-collapsed):not(.timer-running) .timer-container,
+            body:not(.panel-collapsed):not(.timer-running) .break-timer-container,
+            body:not(.panel-collapsed):not(.timer-running) .controls-container,
+            body:not(.panel-collapsed):not(.timer-running) #subtitle,
+            body:not(.panel-collapsed):not(.timer-running) .subject-container,
+            body:not(.panel-collapsed):not(.timer-running) #main-title,
+            body:not(.panel-collapsed):not(.timer-running) #settings-button-menu {
+                opacity: 0 !important;
+                pointer-events: none !important;
+            }
+            /* Restore button visibile per mobile e allineato al titolo */
+            .restore-panel-btn {
+                z-index: 60 !important;
+                top: 4vh !important;
+                transform: none !important;
+            }
+            /* Allineare impostazioni al titolo */
+            #settings-button-menu {
+                top: 4vh !important;
+                transform: none !important;
+                width: 6vmax !important;
+                height: 6vmax !important;
+            }
+
+            /* Settings Popup Mobile Fixes */
+            .info-menu-content {
+                width: 95vw !important;
+                max-width: 95vw !important;
+                padding: 4vh 4vw !important;
+                max-height: 90vh !important;
+            }
+            .menu-tab-btn {
+                font-size: 2.2vh !important;
+                padding: 1.5vh 3vw !important;
+            }
+            .menu-tab-btn .material-icons {
+                font-size: 3vh !important;
+            }
+            .menu-tab-content h3 {
+                font-size: 2.5vh !important;
+            }
+            .color-box {
+                width: 5vh !important;
+                height: 5vh !important;
+            }
+            #menu-title {
+                font-size: 3vh !important;
+            }
+
+            /* Timer: numero 20% più piccolo dell'originale (solo per timer grande) */
+            .timer-container:not(.timer-small) .time,
+            .break-timer-large .time {
+                font-size: clamp(3.3rem, 17vw, 6.7rem) !important;
+            }
+            
+            /* Testo del timer piccolo */
+            .timer-small .time,
+            .break-timer-container:not(.break-timer-large) .time {
+                font-size: clamp(1.5rem, 8vw, 3.5rem) !important;
+            }
+
+            /* Timer piccolo posizionato a metà tra cerchio e comandi */
+            .timer-small {
+                width: 33vw !important;
+                height: 33vw !important;
+                top: 78% !important;
+            }
+            .break-timer-container:not(.break-timer-large) {
+                width: 33vw !important;
+                height: 33vw !important;
+                top: 78% !important;
+            }
+            .break-timer-reset {
+                width: 33vw !important;
+                height: 33vw !important;
+                top: 78% !important;
+                left: 50% !important;
+            }
         }
+        
+        /* Modalità Orizzontale (Landscape) per telefoni */
+        @media screen and (max-height: 500px) and (orientation: landscape) {
+            .timer-container:not(.timer-small),
+            .break-timer-large {
+                width: min(34vw, 46vh, 425px) !important;
+                height: min(34vw, 46vh, 425px) !important;
+            }
+            .timer-container:not(.timer-small) .time,
+            .break-timer-large .time {
+                font-size: clamp(3.5rem, 18vw, 7.1rem) !important;
+            }
+            #settings-button-menu {
+                top: 4vh !important;
+            }
+        }
+
         /* LEFT PANEL SPECCHIETTO */
         .left-panel {
             position: absolute;
