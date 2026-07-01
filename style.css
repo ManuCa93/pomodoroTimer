@@ -1823,7 +1823,7 @@
         /* =======================================================
            RESPONSIVE DESIGN (Tablets & Mobile)
            ======================================================= */
-        @media screen and (max-width: 1024px) { /* iPad e Tablet */
+        @media screen and (max-width: 1199px) { /* iPad Air e Tablet */
             #subject-input {
                 width: 40vw;
             }
@@ -1842,6 +1842,44 @@
             .open-settings-btn {
                 width: 9vmax;
                 height: 9vmax;
+            }
+
+            /* Timer ~30% più piccolo per iPad Air */
+            .timer-container {
+                width: min(28vw, 38.5vh, 350px);
+                height: min(28vw, 38.5vh, 350px);
+            }
+            .time {
+                font-size: clamp(2.9rem, 14.7vw, 5.9rem);
+            }
+            svg {
+                width: min(185%, 448px);
+                height: min(185%, 448px);
+            }
+            .timer-small {
+                width: min(10.5vw, 14vh, 84px) !important;
+                height: min(10.5vw, 14vh, 84px) !important;
+            }
+            .timer-small .time {
+                font-size: clamp(1rem, 4.9vw, 2.8rem);
+            }
+            .break-timer-container {
+                width: min(10.5vw, 14vh, 84px);
+                height: min(10.5vw, 14vh, 84px);
+            }
+            .break-timer-container .time {
+                font-size: clamp(1rem, 4.9vw, 2.8rem);
+            }
+            .break-timer-large {
+                width: min(28vw, 38.5vh, 350px) !important;
+                height: min(28vw, 38.5vh, 350px) !important;
+            }
+            .break-timer-large .time {
+                font-size: clamp(2.9rem, 14.7vw, 5.9rem) !important;
+            }
+            .break-timer-reset {
+                width: min(10.5vw, 14vh, 84px) !important;
+                height: min(10.5vw, 14vh, 84px) !important;
             }
         }
 
