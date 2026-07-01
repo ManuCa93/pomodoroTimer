@@ -1450,21 +1450,27 @@ function initStats() {
     // Sanitize any NaN values left from older bugs
     Object.keys(appData.statsHistory).forEach(key => {
         let st = appData.statsHistory[key];
-        if (st.pomodoros === null || isNaN(Number(st.pomodoros))) st.pomodoros = 0;
+        if (!st || typeof st !== 'object') {
+            appData.statsHistory[key] = { pomodoros: 0, workMinutes: 0, hourly: {}, sessions: [] };
+            st = appData.statsHistory[key];
+        }
+        
+        if (st.pomodoros === null || st.pomodoros === undefined || isNaN(Number(st.pomodoros))) st.pomodoros = 0;
         else st.pomodoros = Number(st.pomodoros);
         
-        if (st.workMinutes === null || isNaN(Number(st.workMinutes))) st.workMinutes = 0;
+        if (st.workMinutes === null || st.workMinutes === undefined || isNaN(Number(st.workMinutes))) st.workMinutes = 0;
         else st.workMinutes = Number(st.workMinutes);
         
-        if (st.sessions) {
+        if (st.sessions && Array.isArray(st.sessions)) {
             st.sessions.forEach(sess => {
-                if (sess.durationSeconds === null || isNaN(Number(sess.durationSeconds))) sess.durationSeconds = 0;
+                if (!sess || typeof sess !== 'object') return;
+                if (sess.durationSeconds === null || sess.durationSeconds === undefined || isNaN(Number(sess.durationSeconds))) sess.durationSeconds = 0;
                 else sess.durationSeconds = Number(sess.durationSeconds);
             });
         }
-        if (st.hourly) {
+        if (st.hourly && typeof st.hourly === 'object') {
             Object.keys(st.hourly).forEach(h => {
-                if (st.hourly[h] === null || isNaN(Number(st.hourly[h]))) st.hourly[h] = 0;
+                if (st.hourly[h] === null || st.hourly[h] === undefined || isNaN(Number(st.hourly[h]))) st.hourly[h] = 0;
                 else st.hourly[h] = Number(st.hourly[h]);
             });
         }
