@@ -74,7 +74,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <!-- Panel Restore Button -->
-    <button id="restore-panel-btn" class="restore-panel-btn" onclick="document.body.classList.remove('panel-collapsed')">
+    <button id="restore-panel-btn" class="restore-panel-btn" onclick="openLeftPanel()">
         <span class="material-icons">keyboard_double_arrow_right</span>
     </button>
 
@@ -84,7 +84,7 @@
         <div class="left-section">
             <h3 class="panel-title" style="display: flex; justify-content: space-between; align-items: center;">
                 Stats
-                <button class="close-panel-btn" onclick="document.body.classList.toggle('panel-collapsed')">
+                <button class="close-panel-btn" onclick="closeLeftPanel()">
                     <span class="material-icons">keyboard_double_arrow_left</span>
                 </button>
             </h3>

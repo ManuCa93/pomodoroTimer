@@ -27,6 +27,7 @@ let longBreakTime = 15 * 60;
 let currentPomodoro = 0;
 let remainingTime = workTime;
 let isRunning = false;
+let panelForcedOpen = false;
 let onBreak = false;
 let interval;
 
@@ -325,7 +326,11 @@ function togglePlayPause() {
     }
     
     // Toggle body class for centering layout
-    document.body.classList.toggle("timer-running", isRunning);
+    if (isRunning && !panelForcedOpen) {
+        document.body.classList.add("timer-running");
+    } else {
+        document.body.classList.remove("timer-running");
+    }
 
     const buttons = document.querySelectorAll('.modern-button');
     buttons.forEach(button => {
@@ -467,6 +472,7 @@ function resetTimer() {
     
     clearInterval(interval);
     isRunning = false;
+    panelForcedOpen = false;
     currentPomodoro = 0;
     remainingTime = workTime;
     onBreak = false;
@@ -2030,6 +2036,33 @@ function sortTasks(col) {
 
 function openFullDatabase() {
     alert("Full Database Modal UI coming soon! For now, scroll horizontally.");
+}
+
+// --- Gestione apertura pannello con mouseover ---
+document.addEventListener('mousemove', (e) => {
+    // Se il mouse va molto a sinistra e il timer sta andando
+    if (e.clientX < 40 && isRunning && !panelForcedOpen && !document.body.classList.contains('panel-collapsed')) {
+        panelForcedOpen = true;
+        document.body.classList.remove("timer-running");
+        document.body.classList.remove("panel-collapsed");
+    }
+});
+
+function openLeftPanel() {
+    if (isRunning) {
+        panelForcedOpen = true;
+        document.body.classList.remove("timer-running");
+    }
+    document.body.classList.remove('panel-collapsed');
+}
+
+function closeLeftPanel() {
+    panelForcedOpen = false;
+    if (isRunning) {
+        document.body.classList.add("timer-running");
+    } else {
+        document.body.classList.add('panel-collapsed');
+    }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
