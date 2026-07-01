@@ -1446,6 +1446,30 @@ function initStats() {
         if (!appData.statsHistory[today].sessions) appData.statsHistory[today].sessions = [];
         saveAppData();
     }
+    
+    // Sanitize any NaN values left from older bugs
+    Object.keys(appData.statsHistory).forEach(key => {
+        let st = appData.statsHistory[key];
+        if (st.pomodoros === null || isNaN(Number(st.pomodoros))) st.pomodoros = 0;
+        else st.pomodoros = Number(st.pomodoros);
+        
+        if (st.workMinutes === null || isNaN(Number(st.workMinutes))) st.workMinutes = 0;
+        else st.workMinutes = Number(st.workMinutes);
+        
+        if (st.sessions) {
+            st.sessions.forEach(sess => {
+                if (sess.durationSeconds === null || isNaN(Number(sess.durationSeconds))) sess.durationSeconds = 0;
+                else sess.durationSeconds = Number(sess.durationSeconds);
+            });
+        }
+        if (st.hourly) {
+            Object.keys(st.hourly).forEach(h => {
+                if (st.hourly[h] === null || isNaN(Number(st.hourly[h]))) st.hourly[h] = 0;
+                else st.hourly[h] = Number(st.hourly[h]);
+            });
+        }
+    });
+    saveAppData();
 }
 
 function recordSessionTime(startObj, endObj, isFullPomo) {
