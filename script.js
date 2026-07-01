@@ -1447,8 +1447,14 @@ function initStats() {
         saveAppData();
     }
     
-    // Sanitize any NaN values left from older bugs
+    // Sanitize any NaN values left from older bugs and delete corrupted keys
     Object.keys(appData.statsHistory).forEach(key => {
+        // Delete keys that are not valid dates (e.g. "NaN-NaN-NaN" or garbage)
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(key)) {
+            delete appData.statsHistory[key];
+            return;
+        }
+
         let st = appData.statsHistory[key];
         if (!st || typeof st !== 'object') {
             appData.statsHistory[key] = { pomodoros: 0, workMinutes: 0, hourly: {}, sessions: [] };
