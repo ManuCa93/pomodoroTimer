@@ -1561,7 +1561,10 @@ function updateStatsUI() {
     function addDataToMacro(macro, labelIndex, mins) {
         let name = macro ? macro : "General";
         if (!datasetsMap[name]) {
-            datasetsMap[name] = new Array(chartLabels.length).fill(0);
+            datasetsMap[name] = [];
+        }
+        while(datasetsMap[name].length <= labelIndex) {
+            datasetsMap[name].push(0);
         }
         datasetsMap[name][labelIndex] += mins;
     }
@@ -1657,6 +1660,11 @@ function updateStatsUI() {
     const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#8A2BE2';
     
     Object.keys(datasetsMap).forEach(macroName => {
+        // Ensure array is fully padded for Chart.js
+        while(datasetsMap[macroName].length < chartLabels.length) {
+            datasetsMap[macroName].push(0);
+        }
+        
         let bgColor = primaryColor;
         if (macroName !== "General") {
             let hash = 0;
