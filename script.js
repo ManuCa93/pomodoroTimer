@@ -1408,6 +1408,13 @@ function setStatsFilter(filter) {
     updateStatsUI();
 }
 
+function getLocalISODate(d) {
+    if (!d) d = new Date();
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
 
 function initStats() {
     // Pulisci i dati fittizi automaticamente una volta sola
@@ -1420,7 +1427,7 @@ function initStats() {
     if (!appData.statsHistory) {
         appData.statsHistory = {};
         if (appData.stats && appData.stats.date) {
-            let oldDate = new Date(appData.stats.date).toISOString().split('T')[0];
+            let oldDate = getLocalISODate(new Date(appData.stats.date));
             appData.statsHistory[oldDate] = { 
                 pomodoros: appData.stats.pomodoros || 0, 
                 workMinutes: appData.stats.workMinutes || 0,
@@ -1430,7 +1437,7 @@ function initStats() {
         }
     }
     
-    const today = new Date().toISOString().split('T')[0];
+    const today = getLocalISODate(new Date());
     if (!appData.statsHistory[today]) {
         appData.statsHistory[today] = { pomodoros: 0, workMinutes: 0, hourly: {}, sessions: [] };
         saveAppData();
@@ -1451,7 +1458,7 @@ function recordSessionTime(startObj, endObj, isFullPomo) {
     let currentStart = new Date(startObj.getTime());
     
     if (isFullPomo) {
-        const endDateStr = endObj.toISOString().split('T')[0];
+        const endDateStr = getLocalISODate(endObj);
         if(!appData.statsHistory[endDateStr]) {
             appData.statsHistory[endDateStr] = { hourly: {}, workMinutes: 0, pomodoros: 0, sessions: [] };
         }
@@ -1459,7 +1466,7 @@ function recordSessionTime(startObj, endObj, isFullPomo) {
     }
     
     while (currentStart < endObj) {
-        let dateStr = currentStart.toISOString().split('T')[0];
+        let dateStr = getLocalISODate(currentStart);
         let currentHour = currentStart.getHours();
         
         let nextHour = new Date(currentStart);
@@ -1480,7 +1487,7 @@ function recordSessionTime(startObj, endObj, isFullPomo) {
         currentStart = nextHour;
     }
     
-    const sessionDateStr = startObj.toISOString().split('T')[0];
+    const sessionDateStr = getLocalISODate(startObj);
     if(!appData.statsHistory[sessionDateStr]) {
         appData.statsHistory[sessionDateStr] = { hourly: {}, workMinutes: 0, pomodoros: 0, sessions: [] };
     }
@@ -1511,7 +1518,7 @@ function updateStatsUI() {
     let chartLabels = [];
     let datasetsMap = {}; // macroName -> array of data corresponding to chartLabels
     
-    const todayStr = new Date().toISOString().split('T')[0];
+    const todayStr = getLocalISODate(new Date());
     const baseDate = new Date(todayStr + "T12:00:00Z");
     
     // Helper to add data to the right dataset
@@ -1524,7 +1531,7 @@ function updateStatsUI() {
     }
 
     if (filter === "today") {
-        let todayStr = new Date().toISOString().split('T')[0];
+        let todayStr = getLocalISODate(new Date());
         let todayStats = appData.statsHistory[todayStr] || { hourly: {}, workMinutes: 0, pomodoros: 0, sessions: [] };
         totalPomos = todayStats.pomodoros || 0;
         totalMins = todayStats.workMinutes || 0;
@@ -1841,7 +1848,7 @@ function addNewTask() {
         macroSubject: proj,
         subject: topic,
         priority: 'Low',
-        startDate: new Date().toISOString().split('T')[0],
+        startDate: getLocalISODate(new Date()),
         endDate: '',
         completed: false
     };
