@@ -167,7 +167,7 @@
             pointer-events: none;
         }
 
-        @media screen and (min-width: 1600px) {
+        @media screen and (min-width: 1900px) {
             svg {
                 width: min(140%, 640px);
                 height: min(140%, 640px);
