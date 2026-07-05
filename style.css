@@ -1854,8 +1854,8 @@
                 font-size: clamp(2.9rem, 14.7vw, 5.9rem);
             }
             svg {
-                width: min(145%, 448px);
-                height: min(145%, 448px);
+                width: min(185%, 448px);
+                height: min(185%, 448px);
                 pointer-events: none;
             }
             .timer-small {
