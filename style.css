@@ -162,16 +162,9 @@
         }
         svg {
             position: absolute;
-            width: 100%;
-            height: 100%;
+            width: 120%;
+            height: 120%;
             pointer-events: none;
-        }
-
-        @media screen and (min-width: 1900px) {
-            svg {
-                width: min(140%, 640px);
-                height: min(140%, 640px);
-            }
         }
         circle {
             fill: none;
