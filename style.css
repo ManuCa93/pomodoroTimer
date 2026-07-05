@@ -162,8 +162,8 @@
         }
         svg {
             position: absolute;
-            width: min(145%, 640px);
-            height: min(145%, 640px);
+            width: min(135%, 640px);
+            height: min(135%, 640px);
             pointer-events: none;
         }
         circle {
