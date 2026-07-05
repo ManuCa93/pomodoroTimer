@@ -162,8 +162,9 @@
         }
         svg {
             position: absolute;
-            width: min(185%, 640px);
-            height: min(185%, 640px);
+            width: min(120%, 450px);
+            height: min(120%, 450px);
+            pointer-events: none;
         }
         circle {
             fill: none;
@@ -1853,8 +1854,9 @@
                 font-size: clamp(2.9rem, 14.7vw, 5.9rem);
             }
             svg {
-                width: min(185%, 448px);
-                height: min(185%, 448px);
+                width: min(120%, 448px);
+                height: min(120%, 448px);
+                pointer-events: none;
             }
             .timer-small {
                 width: min(10.5vw, 14vh, 84px) !important;
@@ -1934,7 +1936,7 @@
             .modern-button .material-icons {
                 font-size: 5rem;
             }
-            /* Timer principale al centro (l'SVG scala di conseguenza al 185%) */
+            /* Timer principale al centro (l'SVG scala di conseguenza al 120%) */
             .timer-container:not(.timer-small),
             .break-timer-large {
                 width: 44vw !important;
