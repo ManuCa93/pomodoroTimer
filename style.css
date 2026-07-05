@@ -162,8 +162,8 @@
         }
         svg {
             position: absolute;
-            width: min(130%, 640px);
-            height: min(130%, 640px);
+            width: min(145%, 640px);
+            height: min(145%, 640px);
             pointer-events: none;
         }
         circle {
@@ -1854,8 +1854,8 @@
                 font-size: clamp(2.9rem, 14.7vw, 5.9rem);
             }
             svg {
-                width: min(130%, 448px);
-                height: min(130%, 448px);
+                width: min(145%, 448px);
+                height: min(145%, 448px);
                 pointer-events: none;
             }
             .timer-small {
