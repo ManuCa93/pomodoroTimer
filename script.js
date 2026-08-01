@@ -1,3 +1,20 @@
+// Restore saved theme colors immediately, before anything else renders — otherwise
+// the app flashes the default palette on every load/reload even though a custom
+// theme was saved (updateColor listeners only ever wrote to localStorage, nothing
+// ever read it back).
+(function restoreSavedTheme() {
+    const cssVarsByStorageKey = {
+        'primary-color': '--primary-color',
+        'background-color': '--background-color',
+        'buttons-action': '--buttons-action',
+        'break-color': '--break-color',
+    };
+    for (const [storageKey, cssVar] of Object.entries(cssVarsByStorageKey)) {
+        const saved = localStorage.getItem(storageKey);
+        if (saved) document.documentElement.style.setProperty(cssVar, saved);
+    }
+})();
+
 const timerContainer = document.querySelector('.timer-container');
 const breakTimerContainer = document.querySelector('.break-timer-container');
 
@@ -2220,6 +2237,10 @@ function closeLeftPanel() {
 document.addEventListener("DOMContentLoaded", () => {
     renderTasks();
     updateOnboardingHint();
+    // CSS vars were already restored at script load (see restoreSavedTheme above);
+    // this just syncs the color pickers and bubbles/buttons to match on first paint.
+    syncColorInputs();
+    updateBubbleColors();
     // Su mobile, parti con il panel chiuso (mostra solo il timer)
     if (window.innerWidth <= 768) {
         document.body.classList.add('panel-collapsed');
