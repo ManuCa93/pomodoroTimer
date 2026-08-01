@@ -1,66 +1,66 @@
 # Pomodoro Timer & Study Analytics
 
-Questo progetto è un Pomodoro Timer avanzato progettato non solo per gestire sessioni di focus e pause, ma anche per offrire un ecosistema completo di tracciamento dello studio e del lavoro.
+A Pomodoro timer built as both a desktop app (Electron) and a static web app, designed to do more than just count down minutes: it also tracks what you worked on, keeps a lightweight task database, and shows analytics about your study/work sessions over time.
 
-## 🚀 Roadmap e Funzionalità Future (Wishlist)
+## Features
 
-1. **Restyling UI/UX (Minimal & Accattivante)**
-   - Rendere l'interfaccia generale, il menu e le impostazioni molto più minimalisti, eleganti e "carini". 
-   - Migliorare l'usabilità per rendere l'esperienza fluida e visivamente appagante.
+**Timer**
+- Classic Pomodoro flow: work → short break → long break, repeating for a configurable number of pomodoros.
+- Circular progress indicator, with a secondary indicator for the current break.
+- Skip, reset, and edit-in-place for the currently running session.
+- Floating **mini-timer** widget that stays on top of other windows/apps — a separate always-on-top window on desktop, a popup window in the browser.
 
-2. **Selezione Materia / Progetto**
-   - Possibilità di selezionare la materia di studio (per l'università) o il progetto (per il lavoro) prima di far partire il timer.
-   - Creazione e gestione di tag, argomenti ed esami associati alle sessioni.
+**Focus & Tasks**
+- Set a **Macro-Subject** (e.g. a project or exam) and an optional **Subject/topic** to tag what you're working on.
+- A Notion-style task table scoped to your current focus: task name, macro-subject, subject, priority, start/end dates, with inline editing, sortable columns, and keyboard navigation.
 
-3. **Analytics Avanzate**
-   - **Tempo totale e medie:** Visualizzazione del tempo totale studiato, medie giornaliere e settimanali.
-   - **Statistiche per Materia:** Quanto si è lavorato per un determinato progetto/esame.
-   - **Aderenza al Timer e Tempo Effettivo:** Tracciamento della differenza tra il tempo pianificato e il tempo effettivo (es. se l'utente stoppa il timer prima della fine). Statistiche su quanto il timer viene rispettato.
-   - Grafici e dashboard per visualizzare i progressi.
+**Stats**
+- Work minutes and completed pomodoros, filterable by Today / 7 Days / 30 Days / Lifetime.
+- Bar/line chart (via Chart.js) with an hourly breakdown of when you actually worked.
 
-4. **Integrazione Google e Sync Multi-dispositivo**
-   - Login tramite Google.
-   - Sincronizzazione in cloud di tutte le impostazioni personalizzate, le materie e le statistiche, permettendo di usare l'app da qualsiasi dispositivo riprendendo da dove si era rimasti.
+**Customization**
+- Custom color theme (primary, background, buttons, break color), applied live and persisted across restarts.
+- Optional animated background bubbles (toggle and count configurable).
 
-5. **Tutorial di Onboarding**
-   - Un bel tutorial iniziale interattivo che spieghi ai nuovi utenti come funziona l'app, come usare i comandi (skip, reset, edit) e come leggere le statistiche.
+## Tech Stack
 
-6. **Robustezza del Timer Dinamico**
-   - Assicurarsi che qualsiasi modifica alle impostazioni (durata del focus, delle pause, ecc.) si applichi alla perfezione e senza bug in qualsiasi momento della sessione.
+- Vanilla JavaScript, HTML, and CSS — no framework, no build step.
+- [Electron](https://www.electronjs.org/) for the desktop app shell.
+- [Chart.js](https://www.chartjs.org/) (via CDN) for the stats chart.
+- Data is currently stored locally via `localStorage` — see [Roadmap](#roadmap) for planned cloud sync.
 
----
+## Getting Started
 
-## 💾 Scelta del Database: SQL vs NoSQL
+### Desktop app (Electron)
 
-Per implementare le funzionalità sopra descritte (utenti, sessioni di studio, materie, impostazioni), ci troviamo di fronte alla scelta tra un database relazionale (SQL) e uno non relazionale (NoSQL). Ecco un confronto specifico per questo progetto:
+```bash
+npm install
+npm start
+```
 
-### Opzione 1: SQL (es. PostgreSQL, MySQL)
-Il modello relazionale è perfetto per dati strutturati e fortemente connessi.
-* **Pro:**
-  * **Ottimo per le Analytics:** Le query statistiche (es. "somma i minuti di studio raggruppati per materia nell'ultima settimana", o le medie giornaliere) sono velocissime e native con comandi come `GROUP BY`, `SUM()`, e le `JOIN`.
-  * **Integrità dei Dati:** Relazioni strette (Un Utente ha molte Materie, una Materia ha molte Sessioni) garantite da chiavi esterne. Nessun dato orfano se si elimina una materia.
-* **Contro:**
-  * Schema rigido. Se in futuro decidi di aggiungere campi complessi alle impostazioni utente, potresti dover fare migrazioni del database.
+To build a Windows installer:
 
-### Opzione 2: NoSQL (es. MongoDB, Firebase Firestore)
-Il modello a documenti (NoSQL) salva i dati in file simili a JSON.
-* **Pro:**
-  * **Flessibilità Estrema:** Molto comodo per salvare le *Impostazioni Utente* (che possono variare e avere chiavi diverse a seconda delle personalizzazioni).
-  * **Sincronizzazione Real-Time (con Firebase):** Se usi Firebase Firestore, avrai l'autenticazione con Google (Google Auth) integrata quasi "gratis" e la sincronizzazione in tempo reale su più dispositivi pronta all'uso.
-* **Contro:**
-  * **Analytics più complesse:** In NoSQL non esistono le `JOIN` tradizionali. Per aggregare i dati ("dimmi quante ore totali per questo progetto nell'ultimo mese") potresti dover scaricare più documenti o mantenere dei contatori aggiornati manualmente (es. ogni volta che finisce un pomodoro, sommiamo +25 a un campo `total_time` del documento materia).
+```bash
+npm run build
+```
 
-### 🏆 Raccomandazione per questo progetto
-Se la tua priorità è avere **Statistiche e Analytics molto complesse e precise** incrociando date, materie e tempo effettivo, un database **SQL (PostgreSQL)** è la scelta migliore.
-Tuttavia, se preferisci uno sviluppo molto rapido, vuoi l'**autenticazione Google immediata** e la sincronizzazione live tra smartphone e PC con poco sforzo, **Firebase (NoSQL)** è un'ottima alternativa, a patto di strutturare bene i dati fin dall'inizio per facilitare i calcoli statistici.
+### Web app
 
----
+The app also runs as a static site with no build step — open `index.html` directly in a browser, or deploy the repository as-is to a static host like GitHub Pages. Electron-only features (like the always-on-top mini-timer window) gracefully fall back to browser equivalents (e.g. a popup window).
 
-## ☁️ Implementazione del Database Cloud e Login Google
+## Roadmap
 
-Per offrire un'esperienza multi-dispositivo e permettere a ogni utente di avere i propri salvataggi, il progetto sfrutta il **Login con Google** e un database online gestito in cloud.
+- Restyle the UI/UX to be more minimal and polished.
+- Richer subject/topic management (tags, exams, per-project organization).
+- Deeper analytics: totals and averages, adherence to planned vs. actual time, more charts.
+- Google login and multi-device cloud sync, so settings/subjects/stats follow you across devices.
+- An interactive onboarding tutorial for first-time users.
+- Make timer-setting changes (durations, breaks, etc.) apply reliably at any point in an active session.
 
-Dato che non abbiamo un server dedicato, la soluzione consigliata è affidarsi a piattaforme **BaaS (Backend as a Service)** come **Firebase** o **Supabase**, ideali e gratuite per questo tipo di progetti.
+### Cloud sync
 
-👉 **Ho preparato una guida dettagliata con tutti gli step necessari per migrare i salvataggi offline sul Cloud. Puoi leggerla qui:**
-[**DATABASE_IMPLEMENTATION_STEPS.md**](DATABASE_IMPLEMENTATION_STEPS.md)
+Moving persistence from `localStorage` to a cloud database (with Google login) is planned but not yet implemented. A detailed walkthrough of the recommended approach (Firebase Auth + Firestore) and the SQL-vs-NoSQL tradeoffs for this project's analytics needs is in [DATABASE_IMPLEMENTATION_STEPS.md](DATABASE_IMPLEMENTATION_STEPS.md).
+
+## License
+
+Released under the [GNU General Public License v3.0](LICENSE).
