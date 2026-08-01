@@ -1252,10 +1252,17 @@ function filterSubjectDropdown() {
     }
     
 
+    const isCreateNew = matches.length === 1 && matches[0].startsWith('Create new: "');
+
     matches.forEach(match => {
         const div = document.createElement("div");
         div.className = "subject-dropdown-item";
-        div.innerText = match;
+
+        const label = document.createElement("span");
+        label.textContent = match;
+        label.style.flex = "1";
+        div.appendChild(label);
+
         div.onclick = function() {
             let selected = match.replace("Create new: \"", "").replace("\"", "");
             document.getElementById("subject-input").value = selected;
@@ -1264,10 +1271,10 @@ function filterSubjectDropdown() {
             document.querySelector('.left-section').classList.remove('focus-empty');
             document.querySelector('.left-section').classList.remove('focus-empty');
             document.getElementById("todo-list-container").style.display = "block";
-            
+
             const editBtn = document.getElementById("edit-macro-btn");
             if (editBtn) editBtn.style.display = "flex";
-            
+
             if (typeof initTopic === "function") initTopic(selected, "");
 
             if (!savedSubjects.includes(selected)) {
@@ -1276,6 +1283,18 @@ function filterSubjectDropdown() {
             if (typeof loadTasks === "function") loadTasks();
             if (typeof updateOnboardingHint === "function") updateOnboardingHint();
         };
+
+        if (!isCreateNew) {
+            const trash = document.createElement("span");
+            trash.className = "material-icons subject-dropdown-delete";
+            trash.textContent = "delete";
+            trash.title = `Delete "${match}" and all its tasks`;
+            trash.onclick = function(e) {
+                deleteMacroSubjectByName(match, e);
+            };
+            div.appendChild(trash);
+        }
+
         dropdown.appendChild(div);
     });
 }
@@ -2114,24 +2133,58 @@ function saveMacroRename() {
 function deleteMacroSubject() {
     const proj = getCurrentProject();
     if (!proj) return;
-    
+
     if (confirm(`Are you sure you want to delete the macro subject "${proj}" and ALL its tasks?`)) {
         if (appData.projects[proj]) {
             delete appData.projects[proj];
         }
-        
+
         if (appData.tasks) {
             appData.tasks = appData.tasks.filter(t => t.macroSubject !== proj);
         }
-        
+
         const idx = savedSubjects.indexOf(proj);
         if (idx !== -1) {
             savedSubjects.splice(idx, 1);
         }
-        
+
         saveAppData();
         clearFocus();
         closeMacroEditPopup();
+    }
+}
+
+// Delete a macro-subject straight from the picker dropdown (the trash icon next to
+// each entry), without requiring the user to select it as focus first.
+function deleteMacroSubjectByName(proj, event) {
+    if (event) event.stopPropagation();
+    if (!proj) return;
+
+    if (confirm(`Are you sure you want to delete the macro subject "${proj}" and ALL its tasks?`)) {
+        if (appData.projects[proj]) {
+            delete appData.projects[proj];
+        }
+
+        if (appData.tasks) {
+            appData.tasks = appData.tasks.filter(t => t.macroSubject !== proj);
+        }
+
+        const idx = savedSubjects.indexOf(proj);
+        if (idx !== -1) {
+            savedSubjects.splice(idx, 1);
+        }
+
+        saveAppData();
+
+        if (getCurrentProject() === proj) {
+            clearFocus();
+        } else {
+            renderTasks();
+        }
+        if (typeof updateOnboardingHint === "function") updateOnboardingHint();
+
+        // Refresh the dropdown in place so the deleted entry disappears immediately
+        if (typeof filterSubjectDropdown === "function") filterSubjectDropdown();
     }
 }
 

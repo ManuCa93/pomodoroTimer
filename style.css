@@ -881,6 +881,16 @@
         .subject-dropdown-item:hover {
             background: var(--primary-color);
         }
+        .subject-dropdown-delete {
+            font-size: 2vh !important;
+            opacity: 0.5;
+            flex-shrink: 0;
+            transition: opacity 0.2s, color 0.2s;
+        }
+        .subject-dropdown-delete:hover {
+            opacity: 1;
+            color: #ff4d4d;
+        }
 
         .subtopic-container {
             position: relative;
