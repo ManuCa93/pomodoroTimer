@@ -1160,11 +1160,12 @@ function clearFocus() {
     // Hide subtopic container explicitly
     document.getElementById("subtopic-container").style.display = "none";
     document.querySelector('.left-section').classList.add('focus-empty');
-    
+
     const editBtn = document.getElementById("edit-macro-btn");
     if (editBtn) editBtn.style.display = "none";
-    
+
     renderTasks();
+    updateOnboardingHint();
 }
 
 let currentDropdownIndex = -1;
@@ -1251,11 +1252,12 @@ function filterSubjectDropdown() {
             if (editBtn) editBtn.style.display = "flex";
             
             if (typeof initTopic === "function") initTopic(selected, "");
-            
+
             if (!savedSubjects.includes(selected)) {
                 savedSubjects.push(selected);
             }
             if (typeof loadTasks === "function") loadTasks();
+            if (typeof updateOnboardingHint === "function") updateOnboardingHint();
         };
         dropdown.appendChild(div);
     });
@@ -1274,6 +1276,19 @@ let appData = JSON.parse(localStorage.getItem("pomodoroAppData")) || { projects:
 
 function saveAppData() {
     localStorage.setItem("pomodoroAppData", JSON.stringify(appData));
+}
+
+function updateOnboardingHint() {
+    const hint = document.getElementById("onboarding-hint");
+    if (!hint) return;
+    const dismissed = localStorage.getItem("onboardingHintDismissed") === "true";
+    const hasEverSetMacro = Object.keys(appData.projects || {}).length > 0;
+    hint.style.display = (!dismissed && !hasEverSetMacro) ? "flex" : "none";
+}
+
+function dismissOnboardingHint() {
+    localStorage.setItem("onboardingHintDismissed", "true");
+    updateOnboardingHint();
 }
 
 function getCurrentProject() { return document.getElementById("subject-input").value.trim(); }
@@ -1833,6 +1848,17 @@ function renderTasks() {
     });
 
     body.innerHTML = "";
+
+    if (sortedTasks.length === 0) {
+        const emptyRow = document.createElement("div");
+        emptyRow.className = "notion-row notion-empty-row";
+        const msg = (appData.tasks.length > 0 && (projFilter || topicFilter))
+            ? 'No tasks match the current Macro-Subject/Subject focus above.'
+            : 'No tasks yet — click "+ New Task" below to add one.';
+        emptyRow.textContent = msg;
+        body.appendChild(emptyRow);
+    }
+
     sortedTasks.forEach((task, idx) => {
         const row = document.createElement("div");
         row.className = "notion-row";
@@ -1860,13 +1886,13 @@ function renderTasks() {
                 <input type="text" class="task-input" style="${task.completed ? 'text-decoration: line-through; opacity: 0.5;' : ''}" value="${task.name}" onchange="updateTask('${task.id}', 'name', this.value)" onblur="checkTaskName('${task.id}', this.value)">
             </div>
             <div class="notion-cell notion-col-macro">
-                <span class="${mClass}" style="cursor: pointer;" onclick="openGlobalDropdown(event, '${task.id}', 'macroSubject')">${mText}</span>
+                <span class="${mClass}" style="cursor: pointer;" tabindex="0" title="Click to change macro-subject" onclick="openGlobalDropdown(event, '${task.id}', 'macroSubject')" onkeydown="handleTagKeydown(event, '${task.id}', 'macroSubject')">${mText}</span>
             </div>
             <div class="notion-cell notion-col-subject">
-                <span class="${sClass}" style="cursor: pointer;" onclick="openGlobalDropdown(event, '${task.id}', 'subject')">${sText}</span>
+                <span class="${sClass}" style="cursor: pointer;" tabindex="0" title="Click to change subject" onclick="openGlobalDropdown(event, '${task.id}', 'subject')" onkeydown="handleTagKeydown(event, '${task.id}', 'subject')">${sText}</span>
             </div>
             <div class="notion-cell notion-col-priority">
-                <span class="${pClass}" onclick="cyclePriority('${task.id}')">${pText}</span>
+                <span class="${pClass}" tabindex="0" title="Click to cycle priority (Low → Medium → High)" onclick="cyclePriority('${task.id}')" onkeydown="handleTagKeydown(event, '${task.id}', 'priority')">${pText}</span>
             </div>
             <div class="notion-cell notion-col-date">
                 <input type="date" class="task-input" style="color: rgba(255,255,255,0.6); padding: 0;" value="${task.startDate || ''}" onchange="updateTask('${task.id}', 'startDate', this.value)">
@@ -2125,6 +2151,19 @@ function cyclePriority(id) {
     }
 }
 
+// Makes the Macro/Subject/Priority tags keyboard-operable (Enter/Space), so Tab moves
+// through them in order instead of jumping straight from the name input to the date
+// inputs and dragging the horizontal scroll far to the right.
+function handleTagKeydown(event, id, field) {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    if (field === 'priority') {
+        cyclePriority(id);
+    } else {
+        openGlobalDropdown(event, id, field);
+    }
+}
+
 function editTaskTag(id, field) {
     const task = appData.tasks.find(t => t.id === id);
     if (task) {
@@ -2180,6 +2219,7 @@ function closeLeftPanel() {
 
 document.addEventListener("DOMContentLoaded", () => {
     renderTasks();
+    updateOnboardingHint();
     // Su mobile, parti con il panel chiuso (mostra solo il timer)
     if (window.innerWidth <= 768) {
         document.body.classList.add('panel-collapsed');

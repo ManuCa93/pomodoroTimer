@@ -126,6 +126,10 @@
         <div class="left-section focus-empty">
             <h3 class="panel-title">Current Focus</h3>
             <div class="unified-task-block" style="width: 100%; margin: 0 auto; box-sizing: border-box; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 1vh 1vw; display: flex; flex-direction: column; gap: 1vh;">
+                <div id="onboarding-hint" class="onboarding-hint" style="display: none;">
+                    <span class="onboarding-hint-text"><strong>How this works:</strong> type a <strong>Macro-Subject</strong> below (e.g. "Math") to create your first project — it also filters which tasks are shown. Once a task table appears, click any Macro/Subject/Priority tag to edit it.</span>
+                    <span class="material-icons onboarding-hint-close" onclick="dismissOnboardingHint()" title="Dismiss">close</span>
+                </div>
                 <div class="subject-container" id="subject-container" style="position: relative; z-index: 50; background: transparent; border: none; padding: 0; width: 100%;">
                 <button id="subject-icon-btn" onclick="clearFocus()">
                     <span class="material-icons">home</span>

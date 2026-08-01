@@ -2515,6 +2515,32 @@
 .tag-priority-Medium { background: rgba(241, 196, 15, 0.2); color: #f1c40f; }
 .tag-priority-Low { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
 .tag-empty { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.5); border-style: dashed; border-width: 1px; border-color: rgba(255,255,255,0.2); }
+.notion-tag:focus-visible { outline: 1px solid var(--primary-color); outline-offset: 2px; }
+
+.notion-empty-row { color: rgba(255,255,255,0.4); font-style: italic; padding: 1vh 0.5vw; border-bottom: none; }
+
+/* Onboarding hint (shown until the user creates their first Macro-Subject) */
+.onboarding-hint {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6vw;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    padding: 1vh 1vw;
+    font-size: 1.2vh;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.75);
+}
+.onboarding-hint strong { color: rgba(255, 255, 255, 0.95); }
+.onboarding-hint-close {
+    font-size: 1.6vh !important;
+    cursor: pointer;
+    opacity: 0.5;
+    flex-shrink: 0;
+    margin-left: auto;
+}
+.onboarding-hint-close:hover { opacity: 1; }
 
 .task-input {
     background: transparent;
